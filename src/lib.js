@@ -97,10 +97,13 @@ export function getInputType(property) {
 }
 
 export function schemaFromObject(o) {
+	if (Array.isArray(o)) {
+		return schemaFromArray(o);
+	}
 	let properties = {};
 	let schema = {
-		type: "object",
 		title: "Object",
+		type: "object",
 		properties: properties
 	};
 
@@ -111,4 +114,12 @@ export function schemaFromObject(o) {
 	schema.required = Object.keys(schema.properties);
 
 	return schema;
+}
+
+function schemaFromArray(arr) {
+	return {
+		title: "Array",
+		type: "array",
+		items: schemaFromObject(arr[0] || {})
+	};
 }
