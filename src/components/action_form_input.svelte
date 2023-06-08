@@ -21,5 +21,5 @@
 {:else if schema.type == 'boolean'}
 	<ActionFormInputCheckbox {inputId} {name} {title} {required} {description}/>
 {:else}
-	<ActionFormInputBase {inputId} {name} {title} {required} inputType={getInputType(schema)} {description}/>
+	<ActionFormInputBase {inputId} {name} {title} {required} inputType={getInputType(schema)} {description} defaultValue={schema.default}/>
 {/if}

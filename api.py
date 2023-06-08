@@ -27,7 +27,7 @@ class User(BaseModel):
 	name:str
 	age:int
 	gender:str
-	favorite_color:str
+	favorite_color:str = 'Red'
 
 
 users = [User(name='Bastien', age=25, gender='male', favorite_color='red')]
