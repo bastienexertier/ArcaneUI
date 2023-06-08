@@ -17,6 +17,7 @@
 
 <div class="mt-3 p-2 box text-white">
 	<h4>{actionName}</h4>
+	{#if action.description}<span>{action.description}</span>{/if}
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
 		<div class="row">
