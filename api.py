@@ -30,7 +30,10 @@ class User(BaseModel):
 	favorite_color:str = 'Red'
 
 
-users = [User(name='Bastien', age=25, gender='male', favorite_color='red')]
+users = [
+	User(name=f'Bastien n°{i}', age=50-i, gender='male', favorite_color='red')
+	for i in range(20)
+]
 
 @app.get('/users', response_model=list[User], tags=['users'])
 def get_users() -> list[User]:
@@ -50,8 +53,8 @@ def post_user(user:User) -> User:
 	users.append(user)
 	return user
 
-@app.delete('/users', tags=['users'])
-def delete_user():
+@app.delete('/users/{user_id}', tags=['users'])
+def delete_user(user_id:int):
 	try:
 		return users.pop()
 	except IndexError:

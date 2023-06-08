@@ -21,6 +21,7 @@
 		for (let [path, endpoint] of Object.entries(openapi.paths)) {
 			for (let [method, action] of Object.entries(endpoint)) {
 				action.path = path;
+				action.endpoint = endpoint;
 				action.method = method;
 				action.parameters = action.parameters || [];
 				if (action.tags) {

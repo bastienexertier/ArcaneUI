@@ -97,9 +97,18 @@ export function getInputType(property) {
 }
 
 export function schemaFromObject(o) {
-	let schema = {};
+	let properties = {};
+	let schema = {
+		type: "object",
+		title: "Object",
+		properties: properties
+	};
+
 	for (let key of Object.keys(o)) {
-		schema[key] = {'title': key};
+		properties[key] = {title: key, type: "string"};
 	}
+
+	schema.required = Object.keys(schema.properties);
+
 	return schema;
 }
