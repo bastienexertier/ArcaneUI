@@ -1,5 +1,5 @@
 <script>
-	import { capitalizeFirstLetter } from '../lib.js';
+	import { schemaFromObject } from '../lib.js';
 
 	export let result;
 	export let action;
@@ -22,6 +22,7 @@
 		title = action.responses[response.status].description;
 	}
 	let resultEntries = Object.entries(result);
+	let properties = schema.properties || schemaFromObject(result);
 </script>
 
 
@@ -30,7 +31,7 @@
 	{#if resultEntries.length}
 		<table>
 			<tr>
-				{#each Object.entries(schema.properties) as [key, property]}
+				{#each Object.entries(properties) as [key, property]}
 					<th>{property.title}</th>
 				{/each}
 			</tr>
@@ -44,6 +45,7 @@
 		{response.statusText}
 	{/if}
 </div>
+
 
 <style>
 	hr {

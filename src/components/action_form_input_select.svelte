@@ -1,15 +1,15 @@
 <script>
 	export let inputId;
-	export let id;
 	export let name;
+	export let title;
 	export let required;
 	export let enumValues;
 	export let description = null;
 </script>
 
 <div class="form-group">
-	<label for={inputId}>{name}</label>
-	<select id={inputId} class="form-control" name={id} required={required}>
+	<label for={inputId}>{title}</label>
+	<select id={inputId} class="form-control" name={name} required={required}>
 		{#each enumValues as enumValue}
 			<option>{enumValue}</option>
 		{/each}

@@ -6,20 +6,20 @@
 	import ActionFormInputCheckbox from './action_form_input_checkbox.svelte';
 
 	export let actionId;
-	export let parameter;
+	export let name;
+	export let schema;
 
-	let inputId = `${actionId}_${parameter.name}`;
+	let inputId = `${actionId}_${name}`;
 
-	let id = parameter.name;
-	let name = parameter.schema.title || parameter.name;
-	let description = parameter.schema.description || parameter.description;
-	let required = parameter.schema.required;
+	let title = schema.title;// || parameter.name;
+	let description = schema.description;// || parameter.description;
+	let required = schema.required || true;
 </script>
 
-{#if 'enum' in parameter.schema}
-	<ActionFormInputSelect {inputId} {id} {name} {required} enumValues={parameter.schema.enum} {description}/>
-{:else if parameter.schema.type == 'boolean'}
-	<ActionFormInputCheckbox {inputId} {id} {name} {required} {description}/>
+{#if 'enum' in schema}
+	<ActionFormInputSelect {inputId} {name} {title} {required} enumValues={schema.enum} {description}/>
+{:else if schema.type == 'boolean'}
+	<ActionFormInputCheckbox {inputId} {name} {title} {required} {description}/>
 {:else}
-	<ActionFormInputBase {inputId} {id} {name} {required} inputType={getInputType(parameter.schema)} {description}/>
+	<ActionFormInputBase {inputId} {name} {title} {required} inputType={getInputType(schema)} {description}/>
 {/if}

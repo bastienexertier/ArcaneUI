@@ -95,3 +95,11 @@ export function getInputType(property) {
 		"integer": "number"
 	}[property.type];
 }
+
+export function schemaFromObject(o) {
+	let schema = {};
+	for (let key of Object.keys(o)) {
+		schema[key] = {'title': key};
+	}
+	return schema;
+}

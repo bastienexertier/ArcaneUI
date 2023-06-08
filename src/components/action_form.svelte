@@ -1,6 +1,5 @@
 <script>
 	import ActionFormInput from '../components/action_form_input.svelte';
-	import ActionFormBody from '../components/action_form_body.svelte';
 
 	export let action;
 	export let handleSubmit;
@@ -23,14 +22,14 @@
 		<div class="row">
 			{#each action.parameters as parameter}
 				<div class="col-3">
-					<ActionFormInput {actionId} {parameter}/>
+					<ActionFormInput {actionId} name={parameter.name} schema={parameter.schema}/>
 				</div>
 			{/each}
 
 			{#if bodySchema}
 				{#each Object.entries(bodySchema.properties) as [propertyId, property]}
 					<div class="col-3">
-						<ActionFormBody {actionId} {propertyId} {property}/>
+						<ActionFormInput {actionId} name={propertyId} schema={property}/>
 					</div>
 				{/each}
 			{/if}
