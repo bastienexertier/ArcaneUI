@@ -1,7 +1,6 @@
 <script>
-	export let url;
-	export let action;
 	export let openapi;
+	export let operation;
 	export let handleClick;
 
 	let bootstrapClassName = {
@@ -9,20 +8,20 @@
 		"post": "success",
 		"delete": "danger",
 		"put": "info"
-	}[action.method.toLowerCase()];
+	}[operation.method.toLowerCase()];
 
-	let actionName = action.summary || action.operationId;
+	let actionName = operation.summary || operation.operationId;
 </script>
 
-<div class="mt-3 p-2 box action text-white border-{bootstrapClassName}" on:click={() => handleClick(action)}>
+<div class="mt-3 p-2 box operation-list-item text-white border-{bootstrapClassName}" on:click={() => handleClick(operation)}>
 	<div>
 		<h5>{actionName}</h5>
-		{#if action.deprecated}
+		{#if operation.deprecated}
 			<span class="card-text deprecated">Do not use!</span>
 		{/if}
-		{#if action.description}
+		{#if operation.description}
 			<hr>
-			<div class="card-text description">{action.description}</div>
+			<div class="card-text description">{operation.description}</div>
 		{/if}
 	</div>
 </div>
@@ -31,7 +30,7 @@
 	hr {
 		margin: 0 0 8px 0;
 	}
-	.action {
+	.operation-list-item {
 		cursor: pointer;
 		border-bottom: 7px solid;
 	}

@@ -1,14 +1,10 @@
 <script>
 	import { capitalizeFirstLetter } from '../lib.js';
-	import ActionPage from '../components/action_page.svelte';
+	import OperationTab from '../components/operation_tab.svelte';
 
-	export let url;
 	export let openapi;
 
-	export let actionsPerTag;
-	export let activeTag = undefined;
-
-    let page;
+	let activeTag = openapi.tags[0];
 
 	function handleClick(tag) {
 		activeTag = tag;
@@ -16,16 +12,16 @@
 </script>
 
 <ul>
-	{#each Object.entries(actionsPerTag) as [tag, actions]}
-		<li class={activeTag === tag ? 'active' : ''}>
-			<span on:click={() => handleClick(tag)}>{capitalizeFirstLetter(tag)} ({actions.length})</span>
+	{#each openapi.tags as tag}
+		<li class={activeTag.name === tag.name ? 'active' : ''}>
+			<span on:click={() => handleClick(tag)}>{capitalizeFirstLetter(tag.name)} ({tag.operations.length})</span>
 		</li>
 	{/each}
 </ul>
 
 {#if activeTag}
 {#key activeTag}
-    <ActionPage {url} {openapi} actions={actionsPerTag[activeTag]}/>
+    <OperationTab {openapi} operations={activeTag.operations}/>
 {/key}
 {/if}
 

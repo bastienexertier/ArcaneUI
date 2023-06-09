@@ -1,4 +1,6 @@
 
+import enum
+from random import choice, randint
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Response, Query
@@ -23,22 +25,35 @@ app.add_middleware(
 	allow_headers=['*'],
 )
 
+class UserGender(enum.Enum):
+	"""The gender of the user"""
+	MALE = 'Male'
+	FEMALE = 'Female'
+
 class User(BaseModel):
 	name:str
 	age:int
-	gender:str
+	gender:UserGender
 	favorite_color:str = 'Red'
 
+class UserDeleteResponse(BaseModel):
+	user_id:int
 
+names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
 users = [
-	User(name=f'Bastien n°{i}', age=50-i, gender='male', favorite_color='red')
+	User(name=f"{choice(names)} n°{i}", age=randint(20, 80), gender=choice((UserGender.MALE, UserGender.FEMALE)), favorite_color=choice(('RGB')))
 	for i in range(20)
 ]
 
 @app.get('/users', response_model=list[User], tags=['users'])
 def get_users() -> list[User]:
-	"""Returns every regirstered user"""
+	"""Returns every registered user"""
 	return users
+
+@app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
+def get_users_by_gender(gender:UserGender) -> list[User]:
+	"""Returns every registered user of the selected gender"""
+	return [user for user in users if user.gender == gender]
 
 @app.get('/users/{user_id}', response_model=User, tags=['users'])
 def get_user(user_id:int) -> User:
@@ -54,9 +69,10 @@ def post_user(user:User) -> User:
 	return user
 
 @app.delete('/users/{user_id}', tags=['users'])
-def delete_user(user_id:int):
+def delete_user(user_id:int) -> UserDeleteResponse:
 	try:
-		return users.pop()
+		users.pop(user_id)
+		return UserDeleteResponse(user_id=user_id)
 	except IndexError:
 		raise HTTPException(status_code=404)
 
@@ -86,7 +102,6 @@ def get_task(user_id:int, task_id:int, page:int=0, done:bool=False) -> Task:
 
 	return Task(id=task_id, user_id=1, text='Kill Bastien')
 
-import enum
 
 class TaskStatus(enum.Enum):
 	""""""
@@ -96,7 +111,7 @@ class TaskStatus(enum.Enum):
 
 @app.post('/users/{user_id}/tasks', tags=['tasks'])
 def add_task(user_id:int, task_status:TaskStatus, text:str='Do something'):
-	return None
+	return Task(id=0, user_id=user_id, text=text)
 
 
 class Tasks(BaseModel):

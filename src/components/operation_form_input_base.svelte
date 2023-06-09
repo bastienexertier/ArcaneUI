@@ -10,7 +10,7 @@
 
 <div class="form-group">
 	<label for={inputId}>{title}</label>
-	<input id={inputId} class="form-control" type={inputType} name={name} required={required} placeholder={defaultValue}>
+	<input id={inputId} class="form-control" type={inputType} name={name} required={required} placeholder={defaultValue} disabled={inputType == 'object' || inputType == 'array'}>
 	{#if description}
 		<small>{description}</small>
 	{/if}
