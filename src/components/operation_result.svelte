@@ -36,7 +36,6 @@
 
 	let operationPath = operation.path.replace(/\/$/, '');
 	let getOperation = null;
-	console.log(properties, openapi.paths);
 	for (let key of Object.keys(properties)) {
 		let endpoint = openapi.paths[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
@@ -44,7 +43,6 @@
 			break;
 		}
 	}
-	console.log(getOperation);
 
 	let deleteOperation = operation.endpoint.delete;
 	let updateOperation = operation.endpoint.put;

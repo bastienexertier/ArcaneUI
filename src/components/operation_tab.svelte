@@ -25,7 +25,8 @@
 	}
 
 	function handleSubmit(e) {
-	    operationResult = callOperation(openapi.server, openapi, activeOperation, Object.fromEntries(new FormData(e.target).entries()));
+		let content = Object.fromEntries(new FormData(e.target).entries());
+	    operationResult = callOperation(openapi.server, openapi, activeOperation, content);
 	}
 
 	function handleClose() {

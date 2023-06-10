@@ -144,6 +144,18 @@ class Tasks(BaseModel):
 def add_tasks(tasks:Tasks):
 	return tasks
 
+class BeepBoop(BaseModel):
+	toggle_1:bool = False
+	toggle_2:bool = False
+	toggle_3:bool = True
+	toggle_4:bool = False
+	toggle_5:bool = True
+	toggle_6:bool = False
+	toggle_7:bool = False
+
+@app.post('/thing', tags=['tasks'])
+def does_beep_boop(o:BeepBoop) -> BeepBoop:
+	return o
 
 from datetime import datetime, date
 

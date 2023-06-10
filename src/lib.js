@@ -40,7 +40,14 @@ export async function callOperation(baseUrl, openapi, operation, content) {
 	if (operation.requestBody) {
 		let schema = operation.requestBody.content['application/json'].schema;
 		for (let [propertyId, property] of Object.entries(schema.properties)) {
-			body[propertyId] = content[propertyId];
+			if (propertyId in content) {
+				body[propertyId] = content[propertyId];
+				continue;
+			}
+			if (property.type === "boolean") {
+				// handles unchecked checkboxes that are not in form data
+				body[propertyId] = false;
+			}
 		}
 	}
 
@@ -224,16 +231,6 @@ function linkOperationToTags(openapi) {
 		});
 	}
 	console.log(openapi);
-}
-
-function createParameterSchema() {
-	return {
-		title: '',
-		name: '',
-		type: '',
-		description: '',
-		type: ''
-	}
 }
 
 function fillSchema(openapi) {
