@@ -11,7 +11,7 @@
 	let itemIds = [];
 
 	const handleAdd = id => {itemIds.push(itemIds.length);itemIds=itemIds;};
-	const handleDelete = id => {itemIds[id] = null;itemIds=itemIds;console.log(id, itemIds)};
+	const handleDelete = id => {itemIds[id] = null;itemIds=itemIds;};
 </script>
 
 {#each itemIds as itemId}

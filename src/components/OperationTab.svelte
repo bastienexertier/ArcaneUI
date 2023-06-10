@@ -31,10 +31,15 @@
 	}
 
 	function handleFormClose() {
-		activeOperation = null;
+		if (operationResult) {
+			showForm = false;
+		} else {
+			activeOperation = null;
+		}
 	}
 
 	function handleClose() {
+		showForm = true;
 		operationResult = null;
 	}
 
@@ -49,7 +54,7 @@
 <div class="row">
 	<div class="col-3 mb-5">
 		{#each operations as operation (operation.operationId)}
-			<OperationListItem operation={operation} {openapi} {handleClick}/>
+			<OperationListItem {operation} {openapi} {handleClick} isActive={operation == activeOperation} />
 		{/each}
 	</div>
 

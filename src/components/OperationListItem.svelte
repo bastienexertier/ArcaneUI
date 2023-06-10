@@ -2,6 +2,7 @@
 	export let openapi;
 	export let operation;
 	export let handleClick;
+	export let isActive = false;
 
 	let bootstrapClassName = {
 		"get": "primary",
@@ -13,7 +14,7 @@
 	let actionName = operation.summary || operation.operationId;
 </script>
 
-<div class="mt-3 p-2 box operation-list-item text-white border-{bootstrapClassName}" on:click={() => handleClick(operation)}>
+<div class:active={isActive} class="mt-3 p-2 box operation-list-item text-white border-{bootstrapClassName}" on:click={() => handleClick(operation)} >
 	<div>
 		<h5>{actionName}</h5>
 		{#if operation.deprecated}
@@ -40,6 +41,9 @@
 	}
 	.description {
 		white-space: pre-line;
+	}
+	.active {
+		background-color: #4c5566;
 	}
 </style>
 

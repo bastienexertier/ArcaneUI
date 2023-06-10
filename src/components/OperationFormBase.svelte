@@ -16,8 +16,6 @@
 
 	let isNested = schema.type === "array" || schema.type === "object" || "anyOf" in schema;
 	let title = schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name);
-
-	console.log(itemId);
 </script>
 
 {#if schema.type === "object"}<OperationFormHeader {schema} />{/if}
