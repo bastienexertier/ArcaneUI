@@ -3,8 +3,8 @@
 	import TrashFill from "svelte-bootstrap-icons/lib/TrashFill.svelte";
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
+	import OperationResultItem from './operation_result_item.svelte';
 	import OperationResultTable from './operation_result_table.svelte';
-	import OperationResultValue from './operation_result_value.svelte';
 
 	import { schemaFromObject } from '../lib.js';
 
@@ -33,12 +33,12 @@
 	}
 
 	let properties = schema.type === "array"? schema.items.properties: schema.properties;
-	content = schema.type === "array"? content:[content];
 
+	let operationPath = operation.path.replace(/\/$/, '');
 	let getOperation = null;
-	console.log(properties);
+	console.log(properties, openapi.paths);
 	for (let key of Object.keys(properties)) {
-		let endpoint = openapi.paths[operation.path + `/{${key}}`];
+		let endpoint = openapi.paths[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
 			getOperation = endpoint.get;
 			break;
@@ -67,7 +67,11 @@
 		</div>
 	</div>
 	{#if content.length != 0}
-		<OperationResultTable {properties} {content} {handleGet} {getOperation}/>
+		{#if schema.type === "array"}
+			<OperationResultTable {properties} {content} {handleGet} {getOperation}/>
+		{:else}
+			<OperationResultItem {properties} {content}/>
+		{/if}
 	{:else}
 		{response.statusText}
 	{/if}
