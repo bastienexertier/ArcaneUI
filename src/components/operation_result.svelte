@@ -37,11 +37,11 @@
 </script>
 
 
-<div class="mt-3 p-2 box text-white result border-{response.ok? 'success':'danger'}">
+<div class="my-3 p-2 box text-white result border-{response.ok? 'success':'danger'}">
 	<div class="d-flex flex-row justify-content-between">
 		<h5>{title}</h5>
 		<div class="d-flex icons">
-			{#if deleteOperation}
+			{#if deleteOperation && response.ok}
 			<div on:click={() => handleDelete(response.url, deleteOperation)}><TrashFill width={22} height={22} /></div>
 			{/if}
 			<div on:click={() => handleClose()}><XCircleFill width={22} height={22} /></div>

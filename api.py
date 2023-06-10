@@ -40,41 +40,40 @@ class UserDeleteResponse(BaseModel):
 	user_id:int
 
 names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
-users = [
-	User(name=f"{choice(names)} n°{i}", age=randint(20, 80), gender=choice((UserGender.MALE, UserGender.FEMALE)), favorite_color=choice(('RGB')))
+users = {
+	i: User(name=f"{choice(names)} n°{i}", age=randint(20, 80), gender=choice((UserGender.MALE, UserGender.FEMALE)), favorite_color=choice(('RGB')))
 	for i in range(20)
-]
+}
 
 @app.get('/users', response_model=list[User], tags=['users'])
 def get_users() -> list[User]:
 	"""Returns every registered user"""
-	return users
+	return list(users.values())
 
 @app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
 def get_users_by_gender(gender:UserGender) -> list[User]:
 	"""Returns every registered user of the selected gender"""
-	return [user for user in users if user.gender == gender]
+	return [user for user in users.values() if user.gender == gender]
 
 @app.get('/users/{user_id}', response_model=User, tags=['users'])
 def get_user(user_id:int) -> User:
-	try:
+	if user_id in users:
 		return users[user_id]
-	except IndexError:
-		raise HTTPException(status_code=404)
+	raise HTTPException(status_code=404)
 
 @app.post('/users', response_model=User, tags=['users'])
 def post_user(user:User) -> User:
 	"""Adds a new user"""
-	users.append(user)
+	users[max(users.keys()) + 1] = user
 	return user
 
 @app.delete('/users/{user_id}', tags=['users'])
 def delete_user(user_id:int) -> UserDeleteResponse:
-	try:
+	if user_id in users:
 		users.pop(user_id)
 		return UserDeleteResponse(user_id=user_id)
-	except IndexError:
-		raise HTTPException(status_code=404)
+
+	raise HTTPException(status_code=404)
 
 
 @app.delete('/purge/users', tags=['users'], deprecated=True)
