@@ -1,5 +1,6 @@
 <script>
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
+	import TrashFill from "svelte-bootstrap-icons/lib/TrashFill.svelte";
 
 	import { schemaFromObject } from '../lib.js';
 
@@ -39,7 +40,10 @@
 <div class="mt-3 p-2 box text-white result border-{response.ok? 'success':'danger'}">
 	<div class="d-flex flex-row justify-content-between">
 		<h5>{title}</h5>
-		<div>
+		<div class="d-flex icons">
+			{#if deleteOperation}
+			<div on:click={() => handleDelete(response.url, deleteOperation)}><TrashFill width={22} height={22} /></div>
+			{/if}
 			<div on:click={() => handleClose()}><XCircleFill width={22} height={22} /></div>
 		</div>
 	</div>
@@ -71,13 +75,6 @@
 			</tr>
 		{/if}
 		</table>
-		{#if deleteOperation}
-			<form on:submit|preventDefault={() => handleDelete(response.url, deleteOperation)}>
-				<div class="button-wrapper">
-					<button type="submit" class="btn btn-outline-light">Delete</button>
-				</div>
-			</form>
-		{/if}
 	{:else}
 		{response.statusText}
 	{/if}
@@ -99,5 +96,10 @@
 	}
 	.result {
 		border-top: 7px solid;
+	}
+	.icons div {
+		cursor: pointer;
+		margin-right: .5rem !important;
+		margin-left: .5rem !important;
 	}
 </style>
