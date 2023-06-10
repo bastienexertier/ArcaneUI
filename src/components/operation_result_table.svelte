@@ -4,6 +4,7 @@
 	export let properties;
 	export let content;
 	export let handleGet;
+	export let getUrl;
 	export let getOperation;
 </script>
 
@@ -18,7 +19,7 @@
 	</thead>
 	<tbody class="table-group-divider">
 		{#each content as item}
-			<tr on:click={() => getOperation && handleGet(getOperation, item)}>
+			<tr on:click={() => getOperation && handleGet(getUrl, getOperation, item)}>
 				{#each Object.keys(properties) as propertyKey}
 					<td><OperationResultValue property={properties[propertyKey]} value={item[propertyKey]} /></td>
 				{/each}

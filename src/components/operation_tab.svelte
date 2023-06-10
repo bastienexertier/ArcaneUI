@@ -18,15 +18,15 @@
 		operationResult = null;
 	}
 
-	function handleGet(getOperation, content) {
+	function handleGet(getUrl, getOperation, content) {
 		showForm = false;
 		activeOperation = getOperation;
-		operationResult = callOperation(openapi.server, openapi, getOperation, content);
+		operationResult = callOperation(openapi.server, openapi, getUrl, getOperation, content);
 	}
 
 	function handleSubmit(e) {
 		let content = Object.fromEntries(new FormData(e.target).entries());
-	    operationResult = callOperation(openapi.server, openapi, activeOperation, content);
+	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
 	}
 
 	function handleClose() {

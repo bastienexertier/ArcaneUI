@@ -15,9 +15,9 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 	return decorateOpenApi(openapiDocumentUrl, openapi);
 }
 
-export async function callOperation(baseUrl, openapi, operation, content) {
+export async function callOperation(baseUrl, openapi, path, operation, content) {
 
-	let _url = `${baseUrl}${operation.path}`;
+	let _url = `${baseUrl}${path}`;
 	let _queryParams = new URLSearchParams();
 
 	if (operation.parameters) {
@@ -40,13 +40,18 @@ export async function callOperation(baseUrl, openapi, operation, content) {
 	if (operation.requestBody) {
 		let schema = operation.requestBody.content['application/json'].schema;
 		for (let [propertyId, property] of Object.entries(schema.properties)) {
+			if (property.type === "boolean") {
+				if (propertyId in content) {
+					body[propertyId] = content[propertyId] == "on";
+				} else {
+					// handles unchecked checkboxes that are not in form data
+					body[propertyId] = false;
+				}
+				continue;
+			}
 			if (propertyId in content) {
 				body[propertyId] = content[propertyId];
 				continue;
-			}
-			if (property.type === "boolean") {
-				// handles unchecked checkboxes that are not in form data
-				body[propertyId] = false;
 			}
 		}
 	}

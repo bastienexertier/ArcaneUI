@@ -35,11 +35,13 @@
 	let properties = schema.type === "array"? schema.items.properties: schema.properties;
 
 	let operationPath = operation.path.replace(/\/$/, '');
+	let getUrl = null;
 	let getOperation = null;
 	for (let key of Object.keys(properties)) {
 		let endpoint = openapi.paths[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
 			getOperation = endpoint.get;
+			getUrl = new URL(response.url).pathname + `{${key}}`;
 			break;
 		}
 	}
@@ -66,7 +68,7 @@
 	</div>
 	{#if content.length != 0}
 		{#if schema.type === "array"}
-			<OperationResultTable {properties} {content} {handleGet} {getOperation}/>
+			<OperationResultTable {properties} {content} {handleGet} {getUrl} {getOperation}/>
 		{:else}
 			<OperationResultItem {properties} {content}/>
 		{/if}
