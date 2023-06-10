@@ -3,10 +3,12 @@
 	
 	export let properties;
 	export let content;
+	export let handleGet;
+	export let getOperation;
 </script>
 
 
-<table class="table table-hover table-bordered">
+<table class="table table-hover table-bordered" class:table-pointer={getOperation != null}>
 	<thead>
 		<tr>
 			{#each Object.entries(properties) as [key, property]}
@@ -16,7 +18,7 @@
 	</thead>
 	<tbody class="table-group-divider">
 		{#each content as item}
-			<tr>
+			<tr on:click={() => getOperation && handleGet(getOperation, item)}>
 				{#each Object.keys(properties) as propertyKey}
 					<td><OperationResultValue property={properties[propertyKey]} value={item[propertyKey]} /></td>
 				{/each}
@@ -32,5 +34,8 @@
 	}
 	.table-hover > tbody > tr:hover > * {
 		color: lightgrey;
+	}
+	.table-pointer {
+		cursor: pointer
 	}
 </style>

@@ -15,7 +15,7 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 	return decorateOpenApi(openapiDocumentUrl, openapi);
 }
 
-export async function callOperation(baseUrl, openapi, operation, formData) {
+export async function callOperation(baseUrl, openapi, operation, content) {
 
 	let _url = `${baseUrl}${operation.path}`;
 	let _queryParams = new URLSearchParams();
@@ -23,11 +23,11 @@ export async function callOperation(baseUrl, openapi, operation, formData) {
 	if (operation.parameters) {
 		for (let param of operation.parameters) {
 			if (param.in == "path") {
-				_url = _url.replace(`{${param.name}}`, formData.get(param.name));
+				_url = _url.replace(`{${param.name}}`, content[param.name]);
 			} else if (param.in == "query") {
-				let value = formData.get(param.name);
+				let value = content[param.name];
 				if (value) {
-					_queryParams.set(param.name, formData.get(param.name));
+					_queryParams.set(param.name, content[param.name]);
 				}
 			} else {
 			}
@@ -40,7 +40,7 @@ export async function callOperation(baseUrl, openapi, operation, formData) {
 	if (operation.requestBody) {
 		let schema = operation.requestBody.content['application/json'].schema;
 		for (let [propertyId, property] of Object.entries(schema.properties)) {
-			body[propertyId] = formData.get(propertyId);
+			body[propertyId] = content[propertyId];
 		}
 	}
 

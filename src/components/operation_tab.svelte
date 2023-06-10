@@ -8,17 +8,24 @@
 	export let openapi;
 	export let operations;
 
+	let showForm = true;
 	let activeOperation = null;
 	let operationResult = null;
 
 	function handleClick(operation) {
+		showForm = true;
 		activeOperation = operation;
 		operationResult = null;
 	}
 
+	function handleGet(getOperation, content) {
+		showForm = false;
+		activeOperation = getOperation;
+		operationResult = callOperation(openapi.server, openapi, getOperation, content);
+	}
+
 	function handleSubmit(e) {
-		const formData = new FormData(e.target);
-	    operationResult = callOperation(openapi.server, openapi, activeOperation, formData);
+	    operationResult = callOperation(openapi.server, openapi, activeOperation, Object.fromEntries(new FormData(e.target).entries()));
 	}
 
 	function handleClose() {
@@ -26,11 +33,10 @@
 	}
 
 	function handleDelete(url, deleteOperation) {
-		if (confirm('Do you really want to delete this item?')) {
-			//activeOperation = deleteOperation;
-			operationResult = callEndpoint(url, 'delete', {});
-			operationResult = null;
-		}
+		if (!confirm('Do you really want to delete this item?')) {return;}
+		showForm = true;
+		operationResult = callEndpoint(url, 'delete', {});
+		operationResult = null;
 	}
 </script>
 
@@ -41,18 +47,18 @@
 		{/each}
 	</div>
 
-	{#if activeOperation}
-	{#key activeOperation}
-		<div class="col-9">
+	<div class="col-9">
+		{#if activeOperation && showForm}
+		{#key activeOperation}
 	    	<OperationForm operation={activeOperation} handleSubmit={handleSubmit}/>
+		{/key}
+		{/if}
 
-	    	{#if operationResult}
-			{#await operationResult then {content, response}}
-				<OperationResult operation={activeOperation} {content} {response} {handleClose} {handleDelete}/>
-			{/await}
-			{/if}
-	    </div>
-	{/key}
-	{/if}
+    	{#if operationResult}
+		{#await operationResult then {content, response}}
+			<OperationResult {openapi} operation={activeOperation} {content} {response} {handleGet} {handleClose} {handleDelete}/>
+		{/await}
+		{/if}
+	</div>
 </div>
 

@@ -38,19 +38,20 @@ class User(BaseModel):
 	favorite_color:str = 'Red'
 
 class UserDeleteResponse(BaseModel):
-	user_id:int
+	name:str
 
 names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
-users = {
-	name: User(
-		name=f"{choice(names)} n°{i}",
+
+def random_user(name:str):
+	return User(
+		name=f"{name}_{randint(0, 1000)}",
 		age=randint(20, 80),
 		gender=choice((UserGender.MALE, UserGender.FEMALE)),
 		is_cool=choice((True, False)),
-		favorite_color=choice(('Red', 'Blue', 'Green')),
+		favorite_color=choice(('Red', 'Blue', 'Green'))
 	)
-	for i, name in enumerate(names)
-}
+
+users = {user.name: user for user in map(random_user, names)}
 
 @app.get('/users', response_model=list[User], tags=['users'])
 def get_users() -> list[User]:
@@ -62,31 +63,39 @@ def get_users_by_gender(gender:UserGender) -> list[User]:
 	"""Returns every registered user of the selected gender"""
 	return [user for user in users.values() if user.gender == gender]
 
-@app.get('/users/{user_id}', response_model=User, tags=['users'])
-def get_user(user_id:int) -> User:
-	if user_id in users:
-		return users[user_id]
+@app.get('/users/{name}', response_model=User, tags=['users'])
+def get_user(name:str) -> User:
+	if name in users:
+		return users[name]
 	raise HTTPException(status_code=404)
 
 @app.post('/users', response_model=User, tags=['users'])
 def post_user(user:User) -> User:
 	"""Adds a new user"""
-	users[max(users.keys()) + 1] = user
+	users[user.name] = user
 	return user
 
-@app.put('/users/{user_id}', tags=['users'])
-def update_user(user_id:int, user:User) -> User:
-	if user_id in users:
-		users[user_id] = user
+@app.post('/users/random', response_model=User, tags=['users'])
+def post_random_user() -> User:
+	"""Adds a new user"""
+	name = choice(names)
+	user = random_user(name)
+	users[user.name] = user
+	return user
+
+@app.put('/users/{name}', tags=['users'])
+def update_user(name:str, user:User) -> User:
+	if name in users:
+		users[name] = user
 		return user
 
 	raise HTTPException(status_code=404)
 
-@app.delete('/users/{user_id}', tags=['users'])
-def delete_user(user_id:int) -> UserDeleteResponse:
-	if user_id in users:
-		users.pop(user_id)
-		return UserDeleteResponse(user_id=user_id)
+@app.delete('/users/{name}', tags=['users'])
+def delete_user(name:str) -> UserDeleteResponse:
+	if name in users:
+		users.pop(name)
+		return UserDeleteResponse(name=name)
 
 	raise HTTPException(status_code=404)
 

@@ -8,9 +8,11 @@
 
 	import { schemaFromObject } from '../lib.js';
 
+	export let openapi;
 	export let operation;
 	export let content;
 	export let response;
+	export let handleGet;
 	export let handleClose;
 	export let handleDelete;
 
@@ -29,6 +31,20 @@
 	if (response.status in operation.responses) {
 		title = operation.responses[response.status].description;
 	}
+
+	let properties = schema.type === "array"? schema.items.properties: schema.properties;
+	content = schema.type === "array"? content:[content];
+
+	let getOperation = null;
+	console.log(properties);
+	for (let key of Object.keys(properties)) {
+		let endpoint = openapi.paths[operation.path + `/{${key}}`];
+		if (endpoint && endpoint.get) {
+			getOperation = endpoint.get;
+			break;
+		}
+	}
+	console.log(getOperation);
 
 	let deleteOperation = operation.endpoint.delete;
 	let updateOperation = operation.endpoint.put;
@@ -51,11 +67,7 @@
 		</div>
 	</div>
 	{#if content.length != 0}
-		{#if schema.type === "array"}
-			<OperationResultTable properties={schema.items.properties} content={content} />
-		{:else}
-			<OperationResultTable properties={schema.properties} content={[content]} />
-		{/if}
+		<OperationResultTable {properties} {content} {handleGet} {getOperation}/>
 	{:else}
 		{response.statusText}
 	{/if}
