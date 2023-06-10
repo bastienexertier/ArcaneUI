@@ -43,13 +43,13 @@
 </script>
 
 <div class="row">
-	<div class="col-3">
+	<div class="col-3 mb-5">
 		{#each operations as operation (operation.operationId)}
 			<OperationListItem operation={operation} {openapi} {handleClick}/>
 		{/each}
 	</div>
 
-	<div class="col-9">
+	<div class="col-9 mb-5">
 		{#if activeOperation && showForm}
 		{#key activeOperation}
 	    	<OperationForm operation={activeOperation} handleSubmit={handleSubmit}/>
