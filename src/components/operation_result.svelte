@@ -1,9 +1,12 @@
 <script>
+	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
+
 	import { schemaFromObject } from '../lib.js';
 
 	export let operation;
 	export let content;
 	export let response;
+	export let handleClose;
 	export let handleDelete;
 
 	let bootstrapClassName = {
@@ -34,7 +37,12 @@
 
 
 <div class="mt-3 p-2 box text-white result border-{response.ok? 'success':'danger'}">
-	<h5>{title}</h5>
+	<div class="d-flex flex-row justify-content-between">
+		<h5>{title}</h5>
+		<div>
+			<div on:click={() => handleClose()}><XCircleFill width={22} height={22} /></div>
+		</div>
+	</div>
 	{#if content.length != 0}
 		<table>
 		{#if schema.type === "array"}

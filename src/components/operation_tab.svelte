@@ -21,6 +21,10 @@
 	    operationResult = callOperation(openapi.server, openapi, activeOperation, formData);
 	}
 
+	function handleClose() {
+		operationResult = null;
+	}
+
 	function handleDelete(url, deleteOperation) {
 		if (confirm('Do you really want to delete this item?')) {
 			//activeOperation = deleteOperation;
@@ -44,7 +48,7 @@
 
 	    	{#if operationResult}
 			{#await operationResult then {content, response}}
-				<OperationResult operation={activeOperation} {content} {response} {handleDelete}/>
+				<OperationResult operation={activeOperation} {content} {response} {handleClose} {handleDelete}/>
 			{/await}
 			{/if}
 	    </div>
