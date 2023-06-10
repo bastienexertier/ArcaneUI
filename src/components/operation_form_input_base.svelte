@@ -6,5 +6,4 @@
 	export let defaultValue = null;
 </script>
 
-
 <input id={inputId} class="form-control" type={inputType} name={name} required={required} placeholder={defaultValue}>

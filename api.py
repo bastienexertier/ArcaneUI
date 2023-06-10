@@ -1,7 +1,7 @@
 
 import enum
 from random import choice, randint
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import FastAPI, HTTPException, Response, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -245,3 +245,10 @@ def add_instrument(company:str, portfolio:Portfolio) -> Portfolio:
 	print(portfolio)
 	return portfolio
 
+# class Derivative(BaseModel):
+# 	name:str
+# 	inner:Union['Derivative',None]
+
+# @app.post('/instruments/derivative', tags=['instruments'])
+# def add_derivative_instrument(derivative:Derivative):
+# 	return derivative

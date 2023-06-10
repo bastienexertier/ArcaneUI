@@ -19,7 +19,7 @@
 	let responseType = operation.responses[response.status];
 	let schema = responseType && responseType.content && responseType.content['application/json'].schema || schemaFromObject(content);
 
-	if (Object.keys(schema).length === 0) {
+	if (Object.keys(schema).length === 0 || !schema.properties || !(schema.items && schema.items.properties)) {
 		schema = schemaFromObject(content);
 	}
 
