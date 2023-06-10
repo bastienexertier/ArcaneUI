@@ -1,5 +1,5 @@
 <script>
-	import OperationFormBase from './operation_form_base.svelte';
+	import OperationFormBase from './OperationFormBase.svelte';
 
 	export let operationId;
 	export let schemas;
@@ -10,7 +10,9 @@
 
 <div class="d-flex flex-row choices">
 	{#each schemas as schema, index}
-		<div class="me-2" class:selected={index == selected} on:click={() => selected = index}>{schema.title}</div>
+		<div class="me-2" class:selected={index == selected} on:click={() => selected = index}>
+			{schema.title || schema.type}
+		</div>
 	{/each}
 </div>
 

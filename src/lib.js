@@ -32,12 +32,11 @@ function _unflatten(previous, path, index, value) {
 	let currKey = path[index];
 	let newNode = previous[prevKey] || (isInteger(currKey)? []:{});
 
+	//console.log(index, prevKey, currKey, newNode);
+
 	let res = _unflatten(newNode, path, index+1, value);
 
-	if (!isInteger(currKey)) {
-		newNode[currKey] = res;
-	}
-
+	newNode[currKey] = res;
 	previous[prevKey] = newNode;
 
 	return newNode;
@@ -49,16 +48,26 @@ function fixFormData(data, schema) {
 }
 
 function _fix(data, schema) {
-	if (!schema) { return; }
+	//console.log('_fix', data, schema);
 
-	console.log(schema, data);
+	if (!schema || !schema.type) { return; }
+	if (schema.type === "integer") { return; }
+
 	if ("anyOf" in schema) {
 		_fix(data, schema.anyOf[data.anyOf]);
 		delete data.anyOf;
 		return;
 	}
 
+	if (schema.type === "array") {
+		for (let item of data) {
+			_fix(item, schema.items);
+		}
+		return;
+	}
+
 	for (let [propertyId, property] of Object.entries(schema.properties)) {
+		//console.log(propertyId, property, data);
 		if (property.type === "object") {
 			_fix(data[propertyId], property);
 			continue;
@@ -87,6 +96,8 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 
 	let _url = `${baseUrl}${path}`;
 	let _queryParams = new URLSearchParams();
+
+	//console.log('callOperation', operation, content);
 
 	if (operation.parameters) {
 		for (let param of operation.parameters) {

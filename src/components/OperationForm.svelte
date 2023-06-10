@@ -1,6 +1,6 @@
 <script>
-	import OperationFormBase from './operation_form_base.svelte';
-	import OperationFormInput from './operation_form_input.svelte';
+	import OperationFormBase from './OperationFormBase.svelte';
+	import OperationFormInput from './OperationFormInput.svelte';
 
 	export let operation;
 	export let handleSubmit;

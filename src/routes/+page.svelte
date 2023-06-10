@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte'
 	import { loadOpenApiDocument } from "../lib.js";
 
-	import OperationTabs from '../components/operation_tabs.svelte';
+	import OperationTabs from '../components/OperationTabs.svelte';
 
 
 	let converter = new showdown.Converter();

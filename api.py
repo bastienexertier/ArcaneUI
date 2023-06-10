@@ -151,11 +151,8 @@ def add_task(user_id:int, task_status:TaskStatus, text:str='Do something'):
 	return Task(id=0, user_id=user_id, text=text)
 
 
-class Tasks(BaseModel):
-	tasks:list[Task]
-
 @app.post('/tasks', tags=['tasks'])
-def add_tasks(tasks:Tasks):
+def add_tasks(tasks:list[Task]):
 	return tasks
 
 class BeepBoop(BaseModel):
@@ -221,14 +218,14 @@ async def read_items(
 
 
 class Equity(BaseModel):
-	"""An Equity"""
+	"""Equities are defined by a price and historical dividends"""
 	ticker:str
 	price:float
 	is_good:bool
 	dividends:list[int]
 
 class Bond(BaseModel):
-	"""A Bond"""
+	"""Bonds are defined by a price, a maturity and historical coupons"""
 	ticker:str
 	maturity:int
 	coupons:list[int]
@@ -237,20 +234,30 @@ class Bond(BaseModel):
 class Portfolio(BaseModel):
 	"""A portfolio"""
 	code:str
-	holdings:list[Equity]
+	holdings:list[Equity|Bond]
 
-@app.get('/instruments', tags=['finance'])
-def get_instruments(name:list[str]) -> list[str]:
-	return name
 
-@app.post('/portfolio', tags=['finance'])
+@app.post('/portfolios', tags=['finance'])
 def add_portfolio(company:str, portfolio:Portfolio) -> Portfolio:
 	return portfolio
+
+@app.get('/portfolios', tags=['finance'])
+def get_portfolios(name:Annotated[list[str], Query()]) -> list[str]:
+	print(name)
+	return name
 
 @app.post('/instruments', tags=['finance'])
 def add_instrument(instrument:Bond|Equity):
 	print(instrument)
 	return instrument
+
+@app.get('/instruments/{id}', tags=['finance'])
+def get_instrument(id:int|bool):
+	return id
+
+@app.post('/traders', tags=['finance'])
+def add_traders(traders:list[User]):
+	return traders
 
 # class Derivative(BaseModel):
 # 	name:str

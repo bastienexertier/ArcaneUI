@@ -1,9 +1,9 @@
 <script>
 	import { callOperation, callEndpoint, unflattenFormData } from '../lib.js';
 
-	import OperationListItem from './operation_list_item.svelte';
-	import OperationForm from './operation_form.svelte';
-	import OperationResult from './operation_result.svelte';
+	import OperationListItem from './OperationListItem.svelte';
+	import OperationForm from './OperationForm.svelte';
+	import OperationResult from './OperationResult.svelte';
 
 	export let openapi;
 	export let operations;

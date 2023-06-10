@@ -1,5 +1,5 @@
 <script>
-	import OperationFormBase from './operation_form_base.svelte';
+	import OperationFormBase from './OperationFormBase.svelte';
 
 	export let operationId;
 	export let schema;

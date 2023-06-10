@@ -1,6 +1,6 @@
 <script>
 	import { capitalizeFirstLetter } from '../lib.js';
-	import OperationTab from '../components/operation_tab.svelte';
+	import OperationTab from '../components/OperationTab.svelte';
 
 	export let openapi;
 

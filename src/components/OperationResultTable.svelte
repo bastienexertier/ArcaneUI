@@ -1,5 +1,5 @@
 <script>
-	import OperationResultValue from './operation_result_value.svelte';
+	import OperationResultValue from './OperationResultValue.svelte';
 	
 	export let properties;
 	export let content;
