@@ -34,6 +34,7 @@ class User(BaseModel):
 	name:str
 	age:int
 	gender:UserGender
+	is_cool:bool
 	favorite_color:str = 'Red'
 
 class UserDeleteResponse(BaseModel):
@@ -41,8 +42,14 @@ class UserDeleteResponse(BaseModel):
 
 names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
 users = {
-	i: User(name=f"{choice(names)} n°{i}", age=randint(20, 80), gender=choice((UserGender.MALE, UserGender.FEMALE)), favorite_color=choice(('RGB')))
-	for i in range(20)
+	name: User(
+		name=f"{choice(names)} n°{i}",
+		age=randint(20, 80),
+		gender=choice((UserGender.MALE, UserGender.FEMALE)),
+		is_cool=choice((True, False)),
+		favorite_color=choice(('Red', 'Blue', 'Green')),
+	)
+	for i, name in enumerate(names)
 }
 
 @app.get('/users', response_model=list[User], tags=['users'])
@@ -66,6 +73,14 @@ def post_user(user:User) -> User:
 	"""Adds a new user"""
 	users[max(users.keys()) + 1] = user
 	return user
+
+@app.put('/users/{user_id}', tags=['users'])
+def update_user(user_id:int, user:User) -> User:
+	if user_id in users:
+		users[user_id] = user
+		return user
+
+	raise HTTPException(status_code=404)
 
 @app.delete('/users/{user_id}', tags=['users'])
 def delete_user(user_id:int) -> UserDeleteResponse:
