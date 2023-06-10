@@ -107,12 +107,32 @@ def purge_users():
 
 
 
+class TaskStatus(enum.Enum):
+	""""""
+	TODO = "TODO"
+	IN_PROGRESS = "IN_PROGRESS"
+	DONE = "DONE"
+
 class Task(BaseModel):
 	id:int
 	user_id:int
 	text:str
+	status:TaskStatus = TaskStatus.TODO
 
-@app.get('/users/{user_id}/tasks/{task_id}', tags=['tasks'])
+@app.get(
+	'/users/{user_id}/tasks/{task_id}',
+	tags=['tasks'],
+	response_model=Task,
+	responses={
+		200: {
+			"model": Task,
+			"description": "Here is your task:",
+		},
+		404: {
+			"description": "The requested task doesnt exist."
+		}
+	},
+)
 def get_task(user_id:int, task_id:int, page:int=0, done:bool=False) -> Task:
 	"""
 	Loads a task.
@@ -125,12 +145,6 @@ def get_task(user_id:int, task_id:int, page:int=0, done:bool=False) -> Task:
 
 	return Task(id=task_id, user_id=1, text='Kill Bastien')
 
-
-class TaskStatus(enum.Enum):
-	""""""
-	TODO = "TODO"
-	IN_PROGRESS = "IN_PROGRESS"
-	DONE = "DONE"
 
 @app.post('/users/{user_id}/tasks', tags=['tasks'])
 def add_task(user_id:int, task_status:TaskStatus, text:str='Do something'):
