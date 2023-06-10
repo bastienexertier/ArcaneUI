@@ -225,25 +225,32 @@ class Equity(BaseModel):
 	ticker:str
 	price:float
 	is_good:bool
+	dividends:list[int]
 
 class Bond(BaseModel):
 	"""A Bond"""
 	ticker:str
 	maturity:int
+	coupons:list[int]
+
 
 class Portfolio(BaseModel):
 	"""A portfolio"""
 	code:str
 	holdings:list[Equity]
 
-@app.get('/instruments', tags=['instruments'])
+@app.get('/instruments', tags=['finance'])
 def get_instruments(name:list[str]) -> list[str]:
 	return name
 
-@app.post('/instruments', tags=['instruments'])
-def add_instrument(company:str, portfolio:Portfolio) -> Portfolio:
-	print(portfolio)
+@app.post('/portfolio', tags=['finance'])
+def add_portfolio(company:str, portfolio:Portfolio) -> Portfolio:
 	return portfolio
+
+@app.post('/instruments', tags=['finance'])
+def add_instrument(instrument:Bond|Equity):
+	print(instrument)
+	return instrument
 
 # class Derivative(BaseModel):
 # 	name:str

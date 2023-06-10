@@ -51,6 +51,13 @@ function fixFormData(data, schema) {
 function _fix(data, schema) {
 	if (!schema) { return; }
 
+	console.log(schema, data);
+	if ("anyOf" in schema) {
+		_fix(data, schema.anyOf[data.anyOf]);
+		delete data.anyOf;
+		return;
+	}
+
 	for (let [propertyId, property] of Object.entries(schema.properties)) {
 		if (property.type === "object") {
 			_fix(data[propertyId], property);
@@ -61,6 +68,7 @@ function _fix(data, schema) {
 			for (let item of data[propertyId]) {
 				_fix(item, property.items);	
 			}
+			continue;
 		}
 		if (property.type === "boolean") {
 			if (propertyId in data) {
@@ -69,10 +77,6 @@ function _fix(data, schema) {
 				// handles unchecked checkboxes that are not in form data
 				data[propertyId] = false;
 			}
-			continue;
-		}
-		if (propertyId in data) {
-			data[propertyId] = data[propertyId];
 			continue;
 		}
 	}
