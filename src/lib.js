@@ -15,6 +15,70 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 	return decorateOpenApi(openapiDocumentUrl, openapi);
 }
 
+export function unflattenFormData(data) {
+	let content = {};
+	for (let [key, value] of data) {
+		_unflatten(content, key.split('.'), 1, value);
+	}
+	return content[''];
+}
+
+const isInteger = s => /^\d+$/.test(s);
+
+function _unflatten(previous, path, index, value) {
+	if (index >= path.length) { return value; }
+
+	let prevKey = path[index-1];
+	let currKey = path[index];
+	let newNode = previous[prevKey] || (isInteger(currKey)? []:{});
+
+	let res = _unflatten(newNode, path, index+1, value);
+
+	if (!isInteger(currKey)) {
+		newNode[currKey] = res;
+	}
+
+	previous[prevKey] = newNode;
+
+	return newNode;
+}
+
+function fixFormData(data, schema) {
+	_fix(data, schema);
+	return data;
+}
+
+function _fix(data, schema) {
+	if (!schema) { return; }
+
+	for (let [propertyId, property] of Object.entries(schema.properties)) {
+		if (property.type === "object") {
+			_fix(data[propertyId], property);
+			continue;
+		}
+		if (property.type === "array") {
+			data[propertyId] = data[propertyId] || [];
+			for (let item of data[propertyId]) {
+				_fix(item, property.items);	
+			}
+		}
+		if (property.type === "boolean") {
+			if (propertyId in data) {
+				data[propertyId] = data[propertyId] == "on";
+			} else {
+				// handles unchecked checkboxes that are not in form data
+				data[propertyId] = false;
+			}
+			continue;
+		}
+		if (propertyId in data) {
+			data[propertyId] = data[propertyId];
+			continue;
+		}
+	}
+}
+
+
 export async function callOperation(baseUrl, openapi, path, operation, content) {
 
 	let _url = `${baseUrl}${path}`;
@@ -36,25 +100,8 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 
 	_url = `${_url}${_queryParams.size?'?':''}${_queryParams}`;
 
-	let body = {};
-	if (operation.requestBody) {
-		let schema = operation.requestBody.content['application/json'].schema;
-		for (let [propertyId, property] of Object.entries(schema.properties)) {
-			if (property.type === "boolean") {
-				if (propertyId in content) {
-					body[propertyId] = content[propertyId] == "on";
-				} else {
-					// handles unchecked checkboxes that are not in form data
-					body[propertyId] = false;
-				}
-				continue;
-			}
-			if (propertyId in content) {
-				body[propertyId] = content[propertyId];
-				continue;
-			}
-		}
-	}
+
+	let body = operation.requestBody? fixFormData(content, operation.requestBody.content['application/json'].schema):{};
 
 	return await callEndpoint(_url, operation.method.toLowerCase(), body);
 }

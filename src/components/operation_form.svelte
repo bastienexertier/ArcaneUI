@@ -1,20 +1,23 @@
 <script>
+	import OperationFormBase from './operation_form_base.svelte';
 	import OperationFormInput from './operation_form_input.svelte';
 
 	export let operation;
 	export let handleSubmit;
 
 	let operationName = operation.summary || operation.operationId;
-	let bodySchema;
+	let bodySchema = null;
 
 	if (operation.requestBody) {
 		bodySchema = operation.requestBody.content['application/json'].schema;
-	} else {
-		bodySchema = {properties: {}};
 	}
+/*
+	if ('anyOf' in bodySchema) {
+		bodySchema = bodySchema.anyOf[0];
+	}*/
 </script>
 
-<div class="mt-3 p-2 box text-white sticky-top">
+<div class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
 	<h4>{operationName}</h4>
 	{#if operation.description}<span>{operation.description}</span>{/if}
 	<hr>
@@ -22,15 +25,15 @@
 		<div class="row">
 			{#each operation.parameters as parameter}
 				<div class="col-3">
-					<OperationFormInput id={operation.operationId} name={parameter.name} schema={parameter.schema || parameter}/>
+					<OperationFormInput id={operation.operationId} name={'.'+parameter.name} schema={parameter.schema || parameter}/>
 				</div>
 			{/each}
+		</div>
 
-			{#each Object.entries(bodySchema.properties) as [propertyId, property]}
-				<div class="col-3">
-					<OperationFormInput id={operation.operationId} name={propertyId} schema={property}/>
-				</div>
-			{/each}
+		<div>
+			{#if bodySchema}
+				<OperationFormBase schema={bodySchema} operationId={operation.operationId} />
+			{/if}
 		</div>
 
 		<div class="button-wrapper">

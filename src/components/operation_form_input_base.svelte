@@ -7,4 +7,4 @@
 </script>
 
 
-<input id={inputId} class="form-control" type={inputType} name={name} required={required} placeholder={defaultValue} disabled={inputType == 'object' || inputType == 'array'}>
+<input id={inputId} class="form-control" type={inputType} name={name} required={required} placeholder={defaultValue}>

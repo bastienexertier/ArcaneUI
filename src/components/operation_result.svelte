@@ -34,14 +34,14 @@
 
 	let properties = schema.type === "array"? schema.items.properties: schema.properties;
 
-	let operationPath = operation.path.replace(/\/$/, '');
+	let operationPath = operation.path;//.replace(/\/$/, '');
 	let getUrl = null;
 	let getOperation = null;
 	for (let key of Object.keys(properties)) {
 		let endpoint = openapi.paths[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
 			getOperation = endpoint.get;
-			getUrl = new URL(response.url).pathname + `{${key}}`;
+			getUrl = new URL(response.url).pathname + `/{${key}}`;
 			break;
 		}
 	}

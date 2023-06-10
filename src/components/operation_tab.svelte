@@ -1,5 +1,5 @@
 <script>
-	import { callOperation, callEndpoint } from '../lib.js';
+	import { callOperation, callEndpoint, unflattenFormData } from '../lib.js';
 
 	import OperationListItem from './operation_list_item.svelte';
 	import OperationForm from './operation_form.svelte';
@@ -25,7 +25,8 @@
 	}
 
 	function handleSubmit(e) {
-		let content = Object.fromEntries(new FormData(e.target).entries());
+		let data = new FormData(e.target);
+		let content = unflattenFormData(data.entries());
 	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
 	}
 

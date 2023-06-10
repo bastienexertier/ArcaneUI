@@ -218,3 +218,30 @@ async def read_items(
 	if q:
 		results.update({"q": q})
 	return results
+
+
+class Equity(BaseModel):
+	"""An Equity"""
+	ticker:str
+	price:float
+	is_good:bool
+
+class Bond(BaseModel):
+	"""A Bond"""
+	ticker:str
+	maturity:int
+
+class Portfolio(BaseModel):
+	"""A portfolio"""
+	code:str
+	holdings:list[Equity]
+
+@app.get('/instruments', tags=['instruments'])
+def get_instruments(name:list[str]) -> list[str]:
+	return name
+
+@app.post('/instruments', tags=['instruments'])
+def add_instrument(company:str, portfolio:Portfolio) -> Portfolio:
+	print(portfolio)
+	return portfolio
+
