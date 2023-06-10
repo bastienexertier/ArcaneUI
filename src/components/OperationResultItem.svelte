@@ -27,7 +27,6 @@
 		border-color: dimgrey;
 	}
 	td:nth-child(1) {
-		/*width: 25%;*/
 		font-weight: 100;
 		font-style: italic;
 		text-align: right;

@@ -1,10 +1,11 @@
 <script>
+	import OperationFormHeader from './OperationFormHeader.svelte'
+	import OperationFormDeleteButton from './OperationFormDeleteButton.svelte'
+
 	import OperationFormInput from './OperationFormInput.svelte';
 	import OperationFormArray from './OperationFormArray.svelte';
 	import OperationFormObject from './OperationFormObject.svelte';
 	import OperationFormAnyOf from './OperationFormAnyOf.svelte';
-	import OperationFormHeader from './OperationFormHeader.svelte'
-	import OperationFormDeleteButton from './OperationFormDeleteButton.svelte'
 
 	export let operationId;
 	export let schema;
@@ -42,14 +43,6 @@
 {/if}
 
 <style>
-	.title {
-		font-size: 1.25rem;
-	}
-	.help {
-		color: darkgrey;
-		font-size: 0.75rem;
-		font-style: italic;
-	}
 	.inner {
 		margin-top: 1rem !important;
 		margin-bottom: 1rem !important;
@@ -63,10 +56,5 @@
 	}
 	hr {
 		margin: 0 0 8px 0;
-	}
-	.delete {
-		cursor: pointer;
-		height: 0px;
-		float: right;
 	}
 </style>

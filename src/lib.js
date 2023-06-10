@@ -10,8 +10,6 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 	let response = await fetch(openapiDocumentUrl, {mode: 'cors', referrerPolicy: 'no-referrer'});
 	let openapi = await OpenAPIParser.dereference(await response.json());
 
-	// doc.components = doc.components || {schemas: {}};
-
 	return decorateOpenApi(openapiDocumentUrl, openapi);
 }
 
@@ -50,12 +48,14 @@ function fixFormData(data, schema) {
 function _fix(data, schema) {
 	//console.log('_fix', data, schema);
 
-	if (!schema || !schema.type) { return; }
+	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
 	if (schema.type === "integer") { return; }
 
 	if ("anyOf" in schema) {
-		_fix(data, schema.anyOf[data.anyOf]);
-		delete data.anyOf;
+		if ("anyOf" in data) {
+			_fix(data, schema.anyOf[data.anyOf]);
+			delete data.anyOf;
+		}
 		return;
 	}
 

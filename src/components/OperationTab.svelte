@@ -52,7 +52,7 @@
 	<div class="col-9 mb-5">
 		{#if activeOperation && showForm}
 		{#key activeOperation}
-	    	<OperationForm operation={activeOperation} handleSubmit={handleSubmit}/>
+	    	<OperationForm operation={activeOperation} {handleSubmit}/>
 		{/key}
 		{/if}
 

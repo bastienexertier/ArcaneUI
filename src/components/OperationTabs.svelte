@@ -21,38 +21,35 @@
 
 {#if activeTag}
 {#key activeTag}
-    <OperationTab {openapi} operations={activeTag.operations}/>
+		<OperationTab {openapi} operations={activeTag.operations}/>
 {/key}
 {/if}
 
 
 <style>
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    border-bottom: 1px solid #363c48;
-  }
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		padding-left: 0;
+		margin-bottom: 0;
+		list-style: none;
+		border-bottom: 1px solid #363c48;
+	}
 	li {
 		margin-bottom: -1px;
 	}
-
-  span {
-    border: 1px solid transparent;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-    display: block;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
-
-  span:hover {
-    border-color: dimgrey dimgrey lightgrey;
-  }
-
-  li.active > span {
-    background-color: #363c48;
-  }
+	span {
+		border: 1px solid transparent;
+		border-top-left-radius: 0.25rem;
+		border-top-right-radius: 0.25rem;
+		display: block;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+	}
+	span:hover {
+		border-color: dimgrey dimgrey lightgrey;
+	}
+	li.active > span {
+		background-color: #363c48;
+	}
 </style>

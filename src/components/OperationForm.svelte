@@ -11,10 +11,6 @@
 	if (operation.requestBody) {
 		bodySchema = operation.requestBody.content['application/json'].schema;
 	}
-/*
-	if ('anyOf' in bodySchema) {
-		bodySchema = bodySchema.anyOf[0];
-	}*/
 </script>
 
 <div class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
