@@ -1,9 +1,12 @@
 <script>
+	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
+
 	import OperationFormBase from './OperationFormBase.svelte';
 	import OperationFormInput from './OperationFormInput.svelte';
 
 	export let operation;
 	export let handleSubmit;
+	export let handleFormClose;
 
 	let operationName = operation.summary || operation.operationId;
 	let bodySchema = null;
@@ -14,8 +17,15 @@
 </script>
 
 <div class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
-	<h4>{operationName}</h4>
-	{#if operation.description}<span>{operation.description}</span>{/if}
+	<div class="d-flex flex-row justify-content-between">
+		<div>
+			<h4>{operationName}</h4>
+			{#if operation.description}<span>{operation.description}</span>{/if}
+		</div>
+		<div class="d-flex icons">
+			<div on:click={() => handleFormClose()}><XCircleFill width={22} height={22} /></div>
+		</div>
+	</div>
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
 		<div class="row">
@@ -49,6 +59,11 @@
 	}
 	button {
 		width: 15%;
+	}
+	.icons div {
+		cursor: pointer;
+		margin-right: .5rem !important;
+		margin-left: .5rem !important;
 	}
 </style>
 

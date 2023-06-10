@@ -30,6 +30,10 @@
 	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
 	}
 
+	function handleFormClose() {
+		activeOperation = null;
+	}
+
 	function handleClose() {
 		operationResult = null;
 	}
@@ -52,7 +56,7 @@
 	<div class="col-9 mb-5">
 		{#if activeOperation && showForm}
 		{#key activeOperation}
-	    	<OperationForm operation={activeOperation} {handleSubmit}/>
+	    	<OperationForm operation={activeOperation} {handleSubmit} {handleFormClose}/>
 		{/key}
 		{/if}
 
