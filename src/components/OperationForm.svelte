@@ -10,9 +10,11 @@
 
 	let operationName = operation.summary || operation.operationId;
 	let bodySchema = null;
+	let bodySchemaRequired = true
 
 	if (operation.requestBody) {
 		bodySchema = operation.requestBody.content['application/json'].schema;
+		bodySchemaRequired = operation.requestBody.required || true;
 	}
 </script>
 
@@ -38,7 +40,7 @@
 
 		<div>
 			{#if bodySchema}
-				<OperationFormBase schema={bodySchema} operationId={operation.operationId} />
+				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} />
 			{/if}
 		</div>
 

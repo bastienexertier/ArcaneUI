@@ -40,20 +40,20 @@ function _unflatten(previous, path, index, value) {
 	return newNode;
 }
 
-function fixFormData(data, schema) {
-	_fix(data, schema);
+function fixFormData(data, schema, required) {
+	_fix(data, schema, required);
 	return data;
 }
 
-function _fix(data, schema) {
-	//console.log('_fix', data, schema);
+function _fix(data, schema, required) {
+	//console.log('_fix', data, schema, required);
 
 	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
 	if (schema.type === "integer") { return; }
 
 	if ("anyOf" in schema) {
 		if ("anyOf" in data) {
-			_fix(data, schema.anyOf[data.anyOf]);
+			_fix(data, schema.anyOf[data.anyOf], required);
 			delete data.anyOf;
 		}
 		return;
@@ -61,21 +61,22 @@ function _fix(data, schema) {
 
 	if (schema.type === "array") {
 		for (let item of data) {
-			_fix(item, schema.items);
+			_fix(item, schema.items, required);
 		}
 		return;
 	}
 
 	for (let [propertyId, property] of Object.entries(schema.properties)) {
 		//console.log(propertyId, property, data);
+		let propertyRequired = schema.required.includes(propertyId);
 		if (property.type === "object") {
-			_fix(data[propertyId], property);
+			_fix(data[propertyId], property, propertyRequired);
 			continue;
 		}
 		if (property.type === "array") {
 			data[propertyId] = data[propertyId] || [];
 			for (let item of data[propertyId]) {
-				_fix(item, property.items);	
+				_fix(item, property.items, propertyRequired);
 			}
 			continue;
 		}
@@ -87,6 +88,9 @@ function _fix(data, schema) {
 				data[propertyId] = false;
 			}
 			continue;
+		}
+		if ((property.type === "string" || property.type === "integer") && !propertyRequired && !data[propertyId]) {
+			delete data[propertyId];
 		}
 	}
 }
@@ -115,8 +119,10 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 
 	_url = `${_url}${_queryParams.size?'?':''}${_queryParams}`;
 
-
-	let body = operation.requestBody? fixFormData(content, operation.requestBody.content['application/json'].schema):{};
+	let body = null;
+	if (operation.requestBody) {
+		body = fixFormData(content, operation.requestBody.content['application/json'].schema, operation.requestBody.required);
+	}
 
 	return await callEndpoint(_url, operation.method.toLowerCase(), body);
 }
@@ -124,7 +130,7 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 export async function callEndpoint(url, method, body) {
 
 	let request;
-	if (method == "get") {
+	if (method == "get" || body === null) {
 		request = self.fetch(
 			url,
 			{

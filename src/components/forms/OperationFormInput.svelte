@@ -8,11 +8,12 @@
 	export let id;
 	export let name;
 	export let schema;
+	export let required;
 
 	let inputId = `${id}_${name}`;
 
 	let title = schema.title || schema.name || name.split('.').slice(-1);// || parameter.name;
-	let required = schema.required || !('default' in schema);
+	//let required = schema.required || !('default' in schema);
 	let inputType = getInputType(schema);
 </script>
 
