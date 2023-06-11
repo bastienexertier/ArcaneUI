@@ -3,8 +3,8 @@
 	import TrashFill from "svelte-bootstrap-icons/lib/TrashFill.svelte";
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
-	import OperationResultItem from './OperationResultItem.svelte';
-	import OperationResultTable from './OperationResultTable.svelte';
+	import OperationResultItem from './results/OperationResultItem.svelte';
+	import OperationResultTable from './results/OperationResultTable.svelte';
 
 	import { schemaFromObject } from '../lib.js';
 
