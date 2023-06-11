@@ -18,7 +18,7 @@ export function unflattenFormData(data) {
 	for (let [key, value] of data) {
 		_unflatten(content, key.split('.'), 1, value);
 	}
-	return content[''] || {};
+	return content[''];
 }
 
 const isInteger = s => /^\d+$/.test(s);
@@ -41,19 +41,24 @@ function _unflatten(previous, path, index, value) {
 }
 
 function fixFormData(data, schema, required) {
+	if (data === undefined && required) {
+		if (schema.type === "object") {data = {};}
+		if (schema.type === "array") {data = [];}
+		//throw "Cant fix form data " + schema.type;
+	}
 	_fix(data, schema, required);
 	return data;
 }
 
 function _fix(data, schema, required) {
-	//console.log('_fix', data, schema, required);
+	console.log('_fix', data, schema, required);
 
-	if (data === undefined && !required) { return; }
+	if ((data === undefined || Object.keys(data).length === 0) && !required) { return; }
 	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
 	if (schema.type === "integer") { return; }
 
 	if ("anyOf" in schema) {
-		if ("anyOf" in data) {
+		if (data && "anyOf" in data) {
 			let selected = data.anyOf;
 			delete data.anyOf;
 			_fix(data, schema.anyOf[selected], required);

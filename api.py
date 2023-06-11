@@ -66,7 +66,8 @@ class UserDeleteResponse(BaseModel):
 
 names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
 
-def random_user(name:str):
+def random_user(_:int):
+	name = choice(names)
 	return User(
 		name=f"{name}_{randint(0, 1000)}",
 		age=randint(20, 80),
@@ -76,7 +77,7 @@ def random_user(name:str):
 		user_address=Address(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK)))
 	)
 
-users = {user.name: user for user in map(random_user, names)}
+users = {user.name: user for user in map(random_user, range(200))}
 
 class GenderFilter(BaseModel):
 	gender:UserGender
