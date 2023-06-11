@@ -18,7 +18,7 @@ export function unflattenFormData(data) {
 	for (let [key, value] of data) {
 		_unflatten(content, key.split('.'), 1, value);
 	}
-	return content[''];
+	return content[''] || {};
 }
 
 const isInteger = s => /^\d+$/.test(s);
@@ -107,12 +107,15 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 
 	if (operation.parameters) {
 		for (let param of operation.parameters) {
+			//console.log(param);
 			if (param.in == "path") {
 				_url = _url.replace(`{${param.name}}`, content[param.name]);
 			} else if (param.in == "query") {
 				let value = content[param.name];
 				if (value) {
 					_queryParams.set(param.name, content[param.name]);
+				} else if (param.required) {
+					if (param.schema.type === "boolean") _queryParams.set(param.name, "false");
 				}
 			} else {
 			}

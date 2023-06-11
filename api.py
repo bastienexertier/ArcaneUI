@@ -88,6 +88,16 @@ def get_users_by_gender(gender:UserGender) -> list[User]:
 	"""Returns every registered user of the selected gender"""
 	return [user for user in users.values() if user.gender == gender]
 
+@app.get('/users/coolness', response_model=list[UserOut], tags=['users'])
+def get_users_by_coolness(is_cool:bool) -> list[UserOut]:
+	"""Returns every registered user that has the selected coolness"""
+	return [UserOut(**user.dict()) for user in users.values() if user.is_cool == is_cool]
+
+@app.get('/users/query', response_model=list[UserOut], tags=['users'])
+def get_users_by_name_query(query:str|None='') -> list[UserOut]:
+	"""Returns every registered user that has the given query in their name"""
+	return [UserOut(**user.dict()) for user in users.values() if query in user.name]
+
 @app.get('/users/{name}', response_model=User, tags=['users'])
 def get_user(name:str, favorite_color:str|None='Red') -> User:
 	if name in users:
