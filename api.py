@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from starlette import status
 
+from rich import print
+
 app = FastAPI(
 	title='My Task Manager',
 	description='Une superbe application.'
@@ -52,6 +54,13 @@ class User(BaseModel):
 	favorite_number:int|None = 5
 	favorite_color:str|None = 'Red'
 
+class UserOut(BaseModel):
+	name:str
+	age:int
+	gender:UserGender
+	is_cool:bool
+
+
 class UserDeleteResponse(BaseModel):
 	name:str
 
@@ -69,10 +78,10 @@ def random_user(name:str):
 
 users = {user.name: user for user in map(random_user, names)}
 
-@app.get('/users', response_model=list[User], tags=['users'])
-def get_users() -> list[User]:
+@app.get('/users', response_model=list[UserOut], tags=['users'])
+def get_users() -> list[UserOut]:
 	"""Returns every registered user"""
-	return list(users.values())
+	return [UserOut(**u.dict()) for u in users.values()]
 
 @app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
 def get_users_by_gender(gender:UserGender) -> list[User]:
@@ -80,7 +89,7 @@ def get_users_by_gender(gender:UserGender) -> list[User]:
 	return [user for user in users.values() if user.gender == gender]
 
 @app.get('/users/{name}', response_model=User, tags=['users'])
-def get_user(name:str) -> User:
+def get_user(name:str, favorite_color:str|None='Red') -> User:
 	if name in users:
 		return users[name]
 	raise HTTPException(status_code=404)
@@ -88,6 +97,7 @@ def get_user(name:str) -> User:
 @app.post('/users', response_model=User, tags=['users'])
 def post_user(user:User) -> User:
 	"""Adds a new user"""
+	print(user)
 	users[user.name] = user
 	return user
 

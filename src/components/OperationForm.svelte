@@ -33,7 +33,7 @@
 		<div class="row">
 			{#each operation.parameters as parameter}
 				<div class="col-3">
-					<OperationFormInput id={operation.operationId} name={'.'+parameter.name} schema={parameter.schema || parameter} required={true}/> <!-- TODO -->
+					<OperationFormInput id={operation.operationId} name={'.'+parameter.name} schema={parameter.schema || parameter} required={parameter.required}/> <!-- TODO -->
 				</div>
 			{/each}
 		</div>
