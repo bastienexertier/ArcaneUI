@@ -49,7 +49,7 @@ function fixFormData(data, schema, required) {
 }
 
 function _fix(data, schema, required) {
-	console.log('_fix', data, schema, required);
+	//console.log('_fix', data, schema, required);
 
 	if ((data === undefined || Object.keys(data).length === 0) && !required) { return; }
 	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
@@ -257,6 +257,27 @@ function schemaFromArray(arr) {
 	};
 }
 
+export function getResponseSchema(operationResponses, httpResponse) {
+
+	let responseType = operationResponses[httpResponse.status] || operationResponses['default'];
+
+	if (!responseType || !responseType.content) {
+		return null;
+	}
+
+	if ('application/json' in responseType.content) {
+		return responseType.content['application/json'];
+	}
+
+	for (let [contentType, contentSchema] of Object.entries(responseType.content)) {
+		if (contentType.includes('json')) {
+			return contentSchema;
+		}
+	}
+
+	return null;
+}
+
 function createTag(tagName) {
 	return {
 		name: tagName,
@@ -288,10 +309,10 @@ function addServer(documentUrl, openapi) {
 	openapi.server = url.origin;
 }
 
+const openapiHttpMethods = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head', 'trace'];
+
 
 function linkOperationToTags(openapi) {
-
-	console.log(openapi);
 
 	let otherOperations = [];
 
@@ -300,6 +321,7 @@ function linkOperationToTags(openapi) {
 
 	for (let [path, endpoint] of Object.entries(openapi.paths)) {
 		for (let [method, operation] of Object.entries(endpoint)) {
+			if (!openapiHttpMethods.includes(method)) { continue; }
 
 			operation.path = path;
 			operation.endpoint = endpoint;
@@ -329,7 +351,6 @@ function linkOperationToTags(openapi) {
 			operations: otherOperations
 		});
 	}
-	console.log(openapi);
 }
 
 function fillSchema(openapi) {
@@ -337,7 +358,8 @@ function fillSchema(openapi) {
 	const emptyParameters = [];
 
 	for (let endpoint of Object.values(openapi.paths)) {
-		for (let operation of Object.values(endpoint)) {
+		for (let [method, operation] of Object.entries(endpoint)) {
+			if (!openapiHttpMethods.includes(method)) { continue; }
 			operation.parameters = operation.parameters || emptyParameters;
 			for (let parameter of operation.parameters) {
 				parameter.schema.name = parameter.schema.name || parameter.name;
@@ -347,8 +369,11 @@ function fillSchema(openapi) {
 }
 
 export function decorateOpenApi(documentUrl, openapi) {
-	addServer(documentUrl, openapi);
-	linkOperationToTags(openapi);
-	fillSchema(openapi);
+	console.log(openapi);
+		addServer(documentUrl, openapi);
+		linkOperationToTags(openapi);
+		fillSchema(openapi);
+	console.log(openapi);
+
 	return openapi;
 }

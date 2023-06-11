@@ -6,7 +6,7 @@
 	import OperationResultItem from './results/OperationResultItem.svelte';
 	import OperationResultTable from './results/OperationResultTable.svelte';
 
-	import { schemaFromObject } from '../lib.js';
+	import { getResponseSchema, schemaFromObject } from '../lib.js';
 
 	export let openapi;
 	export let operation;
@@ -23,9 +23,7 @@
 		url: ''
 	}
 
-	let responseType = operation.responses[response.status];
-	let schema = responseType && responseType.content && responseType.content['application/json'].schema;
-
+	let schema = getResponseSchema(operation.responses, response);
 	if (!schema || (!schema.properties && !(schema.items && schema.items.properties))) {
 		schema = schemaFromObject(content);
 	}
