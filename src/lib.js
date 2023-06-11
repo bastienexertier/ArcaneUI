@@ -48,13 +48,15 @@ function fixFormData(data, schema, required) {
 function _fix(data, schema, required) {
 	//console.log('_fix', data, schema, required);
 
+	if (data === undefined && !required) { return; }
 	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
 	if (schema.type === "integer") { return; }
 
 	if ("anyOf" in schema) {
 		if ("anyOf" in data) {
-			_fix(data, schema.anyOf[data.anyOf], required);
+			let selected = data.anyOf;
 			delete data.anyOf;
+			_fix(data, schema.anyOf[selected], required);
 		}
 		return;
 	}
@@ -67,7 +69,7 @@ function _fix(data, schema, required) {
 	}
 
 	for (let [propertyId, property] of Object.entries(schema.properties)) {
-		let propertyRequired = schema.required.includes(propertyId);
+		let propertyRequired = schema.required && schema.required.includes(propertyId);
 		//console.log(propertyId, propertyRequired, property, data);
 		if (property.type === "object") {
 			_fix(data[propertyId], property, propertyRequired);
@@ -135,7 +137,10 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 export async function callEndpoint(url, method, body) {
 
 	let request;
-	if (method == "get" || body === null) {
+	if (method == "get") {
+		if(body !== null) {
+			throw "Tried to send a body to a GET endpoint";
+		}
 		request = self.fetch(
 			url,
 			{

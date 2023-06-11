@@ -34,7 +34,7 @@
 		{/if}
 	{:else if schema.type === "object"}
 		{#if required}
-			<OperationFormObject {operationId} {schema} {required} {currentId}/>
+			<OperationFormObject {operationId} {schema} {currentId}/>
 		{:else}
 			<OperationFormObjectOptional {operationId} {schema} {currentId}/>
 		{/if}
