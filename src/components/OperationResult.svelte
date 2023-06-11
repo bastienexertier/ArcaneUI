@@ -73,7 +73,7 @@
 			<div on:click={() => handleClose()}><XCircleFill width={22} height={22} /></div>
 		</div>
 	</div>
-	{#if response.ok}
+	{#if content}
 		{#if schema.type === "array"}
 			<OperationResultTable {properties} {content} {handleGet} {getUrl} {getOperation}/>
 		{:else}
