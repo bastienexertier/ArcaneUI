@@ -82,31 +82,31 @@ users = {user.name: user for user in map(random_user, range(200))}
 class GenderFilter(BaseModel):
 	gender:UserGender
 
-	def filter(self, users:list[User]) -> list[User]:
-		return [user for user in users if user.gender == self.gender]
+	def filter(self, _users:list[User]) -> list[User]:
+		return [user for user in _users if user.gender == self.gender]
 
 class CoolnessFilter(BaseModel):
 	is_cool:bool
 
-	def filter(self, users:list[User]) -> list[User]:
-		return [user for user in users if user.is_cool == self.is_cool]
+	def filter(self, _users:list[User]) -> list[User]:
+		return [user for user in _users if user.is_cool == self.is_cool]
 
 class NameFilter(BaseModel):
 	query:str
 
-	def filter(self, users:list[User]) -> list[User]:
-		return [user for user in users if self.query in user.name]
+	def filter(self, _users:list[User]) -> list[User]:
+		return [user for user in _users if self.query in user.name]
 
 class Filters(BaseModel):
 	gender_filter:GenderFilter|None
 	coolness_filter:CoolnessFilter|None
 	name_filter:NameFilter|None
 
-	def filter(self, users:list[User]) -> list[User]:
+	def filter(self, _users:list[User]) -> list[User]:
 		for user_filter in [self.gender_filter, self.coolness_filter, self.name_filter]:
 			if user_filter:
-				users = user_filter.filter(users)
-		return users
+				_users = user_filter.filter(_users)
+		return _users
 
 
 @app.post('/users', response_model=list[UserOut], tags=['users'])
@@ -120,7 +120,15 @@ def get_users_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter) -> 
 	"""Returns every registered user"""
 	return [UserOut(**u.dict()) for u in user_filter.filter(list(users.values()))]
 
-@app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
+# @app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
+# def get_users_zero_or_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter|None) -> list[UserOut]:
+# 	"""Returns every registered user"""
+# 	_users = list(users.values())
+# 	if user_filter:
+# 		_users = user_filter.filter(_users)
+# 	return [UserOut(**u.dict()) for u in _users]
+
+@app.post('/users/filter/3', response_model=list[UserOut], tags=['users'])
 def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|NameFilter]) -> list[UserOut]:
 	"""Returns every registered user"""
 	_users = list(users.values())
