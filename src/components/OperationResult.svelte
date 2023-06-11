@@ -16,11 +16,17 @@
 	export let handleClose;
 	export let handleDelete;
 
+	response = response || { // kinda hacky
+		ok: false,
+		status: 500,
+		statusText: 'An error occured on the backend!',
+		url: ''
+	}
+
 	let responseType = operation.responses[response.status];
 	let schema = responseType && responseType.content && responseType.content['application/json'].schema;
 
 	if (!schema || (!schema.properties && !(schema.items && schema.items.properties))) {
-		console.log('schemaFromObject')
 		schema = schemaFromObject(content);
 	}
 

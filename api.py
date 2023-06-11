@@ -283,6 +283,10 @@ def return_no_content():
 def return_status(status_code:int):
 	raise HTTPException(status_code=status_code)
 
+@app.get('/exceptions')
+def raise_exception():
+	raise Exception('Raised it!')
+
 
 @app.get("/items")
 async def read_items(
