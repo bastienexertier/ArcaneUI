@@ -1,9 +1,9 @@
 <script>
-	import { getInputType } from '../lib.js';
+	import { getInputType } from '/src/lib.js';
 
-	import OperationFormInputBase from './OperationFormInputBase.svelte';
-	import OperationFormInputSelect from './OperationFormInputSelect.svelte';
-	import OperationFormInputCheckbox from './OperationFormInputCheckbox.svelte';
+	import OperationFormInputBase from './inputs/OperationFormInputBase.svelte';
+	import OperationFormInputSelect from './inputs/OperationFormInputSelect.svelte';
+	import OperationFormInputCheckbox from './inputs/OperationFormInputCheckbox.svelte';
 
 	export let id;
 	export let name;

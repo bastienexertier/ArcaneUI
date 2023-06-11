@@ -1,8 +1,8 @@
 <script>
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
-	import OperationFormBase from './OperationFormBase.svelte';
-	import OperationFormInput from './OperationFormInput.svelte';
+	import OperationFormBase from './forms/OperationFormBase.svelte';
+	import OperationFormInput from './forms/OperationFormInput.svelte';
 
 	export let operation;
 	export let handleSubmit;
