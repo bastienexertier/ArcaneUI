@@ -17,9 +17,9 @@
 	export let handleDelete;
 
 	let responseType = operation.responses[response.status];
-	let schema = responseType && responseType.content && responseType.content['application/json'].schema || schemaFromObject(content);
+	let schema = responseType && responseType.content && responseType.content['application/json'].schema;
 
-	if (Object.keys(schema).length === 0 || !schema.properties || !(schema.items && schema.items.properties)) {
+	if (!schema && Object.keys(schema).length === 0 && (!schema.properties || !(schema.items && schema.items.properties))) {
 		schema = schemaFromObject(content);
 	}
 
@@ -66,7 +66,7 @@
 			<div on:click={() => handleClose()}><XCircleFill width={22} height={22} /></div>
 		</div>
 	</div>
-	{#if content.length != 0}
+	{#if response.ok}
 		{#if schema.type === "array"}
 			<OperationResultTable {properties} {content} {handleGet} {getUrl} {getOperation}/>
 		{:else}
