@@ -14,11 +14,11 @@
 	const handleDelete = () => enabled = false;
 </script>
 
-<OperationFormHeader {schema} />
 
 {#if enabled}
 	<OperationFormBase {operationId} {schema} required={true} {currentId} {handleDelete} />
 {:else}
+	<OperationFormHeader {schema} />
 	<div>
 		<div class="btn-add" on:click={handleAdd}>
 			<PlusCircleFill width={22} height={22} />
