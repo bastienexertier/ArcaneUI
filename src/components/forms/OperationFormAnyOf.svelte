@@ -7,20 +7,26 @@
 
 	let selected = null;
 	let name = currentId + '.anyOf';
-	const handleDelete = () => selected = null;
+
+	function handleSelect(id) {
+		selected = id;
+	}
+
+	function handleDelete() {
+		document.getElementById(`${name}.${selected}`).checked = false;
+		selected = null;
+	}
 </script>
 
-{#if selected === null}
-	<div class="choices">
-		{#each schemas as schema, index}
-			{@const id = `${name}.${index}`}
-			<label class="form-check-label" for={id}>
-				{schema.title || (schema.items && schema.items.title) || schema.type}
-			</label>
-			<input class="form-check-input" type="radio" {name} {id} value={index} on:change={e => selected = e.target.value} required>
-		{/each}
-	</div>
-{/if}
+<div class="choices" class:hidden={selected !== null}>
+	{#each schemas as schema, index}
+		{@const id = `${name}.${index}`}
+		<label class="form-check-label" for={id}>
+			{schema.title || (schema.items && schema.items.title) || schema.type}
+		</label>
+		<input class="form-check-input" type="radio" {name} {id} value={index} on:change={e => handleSelect(e.target.value)} required>
+	{/each}
+</div>
 
 {#key selected}
 	{#if selected !== null}
@@ -42,5 +48,8 @@
 	}
 	.selected {
 		text-decoration: underline;
+	}
+	.hidden {
+		display: none;
 	}
 </style>
