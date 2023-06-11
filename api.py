@@ -5,7 +5,7 @@ from typing import Annotated, Union
 
 from fastapi import FastAPI, HTTPException, Response, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from starlette import status
 
 app = FastAPI(
@@ -45,7 +45,8 @@ class User(BaseModel):
 	age:int
 	gender:UserGender
 	is_cool:bool
-	address:Address|None
+	user_address:Address
+	mom_address:Address|None# = Field(default=None, title="Mom Address")
 	favorite_animal:str|None
 	favorite_number:int|None = 5
 	favorite_color:str|None = 'Red'
@@ -61,7 +62,8 @@ def random_user(name:str):
 		age=randint(20, 80),
 		gender=choice((UserGender.MALE, UserGender.FEMALE)),
 		is_cool=choice((True, False)),
-		favorite_color=choice(('Red', 'Blue', 'Green'))
+		favorite_color=choice(('Red', 'Blue', 'Green')),
+		user_address=Address(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK)))
 	)
 
 users = {user.name: user for user in map(random_user, names)}
@@ -230,57 +232,57 @@ async def read_items(
 	return results
 
 
-class Equity(BaseModel):
+class EquityType(BaseModel):
 	"""Equities are defined by a price and historical dividends"""
 	ticker:str
 	price:float
 	is_good:bool
 	dividends:list[int]
 
-class Bond(BaseModel):
-	"""Bonds are defined by a price, a maturity and historical coupons"""
+class BondType(BaseModel):
+	"""BondTypes are defined by a price, a maturity and historical coupons"""
 	ticker:str
 	maturity:int
 	coupons:list[int]
 
 
-class Portfolio0(BaseModel):
-	"""Equity|Bond"""
+class PortfolioType0(BaseModel):
+	"""EquityType|BondType"""
 	code:str
-	holdings:Equity|Bond
+	holdings:EquityType|BondType
 
 @app.post('/portfolios0', tags=['finance'])
-def add_portfolio0(company:str, portfolio:Portfolio0) -> Portfolio0:
+def add_portfolio0(company:str, portfolio:PortfolioType0) -> PortfolioType0:
 	return portfolio
 
 
-class Portfolio1(BaseModel):
-	"""list[Equity|Bond]"""
+class PortfolioType1(BaseModel):
+	"""list[EquityType|BondType]"""
 	code:str
-	holdings:list[Equity|Bond]
+	holdings:list[EquityType|BondType]
 
 @app.post('/portfolios1', tags=['finance'])
-def add_portfolio1(company:str, portfolio:Portfolio1) -> Portfolio1:
+def add_portfolio1(company:str, portfolio:PortfolioType1) -> PortfolioType1:
 	return portfolio
 
 
-class Portfolio2(BaseModel):
-	"""list[Equity]|list[Bond]"""
+class PortfolioType2(BaseModel):
+	"""list[EquityType]|list[BondType]"""
 	code:str
-	holdings:list[Equity]|list[Bond]
+	holdings:list[EquityType]|list[BondType]
 
 @app.post('/portfolios2', tags=['finance'])
-def add_portfolio2(company:str, portfolio:Portfolio2) -> Portfolio2:
+def add_portfolio2(company:str, portfolio:PortfolioType2) -> PortfolioType2:
 	return portfolio
 
 
-class Portfolio3(BaseModel):
-	"""list[Equity]|Bond"""
+class PortfolioType3(BaseModel):
+	"""list[EquityType]|BondType"""
 	code:str
-	holdings:list[Equity]|Bond
+	holdings:list[EquityType]|BondType
 
 @app.post('/portfolios3', tags=['finance'])
-def add_portfolio3(company:str, portfolio:Portfolio3) -> Portfolio3:
+def add_portfolio3(company:str, portfolio:PortfolioType3) -> PortfolioType3:
 	return portfolio
 
 
@@ -290,7 +292,7 @@ def get_portfolios(name:Annotated[list[str], Query()]) -> list[str]:
 	return name
 
 @app.post('/instruments', tags=['finance'])
-def add_instrument(instrument:Bond|Equity):
+def add_instrument(instrument:BondType|EquityType):
 	print(instrument)
 	return instrument
 

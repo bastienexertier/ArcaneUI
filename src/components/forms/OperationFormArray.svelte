@@ -3,7 +3,6 @@
 
 	import OperationFormHeader from './OperationFormHeader.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
-	import OperationFormInput from './OperationFormInput.svelte';
 
 	export let operationId;
 	export let schema;

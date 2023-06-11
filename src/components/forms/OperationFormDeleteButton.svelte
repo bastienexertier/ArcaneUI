@@ -2,10 +2,10 @@
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
 	export let itemId = null;
-	export let handleDelete;
+	export let handleDelete = null;
 </script>
 
-{#if itemId !== null}
+{#if handleDelete !== null}
 	<div class="delete" on:click={() => handleDelete(itemId)}>
 		<XCircleFill width={22} height={22} />
 	</div>

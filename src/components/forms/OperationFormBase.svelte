@@ -2,10 +2,11 @@
 	import OperationFormHeader from './OperationFormHeader.svelte'
 	import OperationFormDeleteButton from './OperationFormDeleteButton.svelte'
 
-	import OperationFormInput from './OperationFormInput.svelte';
-	import OperationFormArray from './OperationFormArray.svelte';
 	import OperationFormObject from './OperationFormObject.svelte';
+	import OperationFormOptional from './OperationFormOptional.svelte';
+	import OperationFormArray from './OperationFormArray.svelte';
 	import OperationFormAnyOf from './OperationFormAnyOf.svelte';
+	import OperationFormInput from './OperationFormInput.svelte';
 
 	export let operationId;
 	export let schema;
@@ -18,7 +19,7 @@
 	let isNested = schema.type === "array" || schema.type === "object" || "anyOf" in schema;
 	let title = schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name);
 
-	console.log(title, required, schema);
+	//console.log(title, required, schema);
 </script>
 
 {#if isNested}
@@ -26,7 +27,11 @@
 	{#if schema.type === "array"}
 		<OperationFormArray {operationId} {schema} {currentId}/>
 	{:else if schema.type === "object"}
-		<OperationFormObject {operationId} {schema} {required} {currentId}/>
+		{#if required}
+			<OperationFormObject {operationId} {schema} {required} {currentId}/>
+		{:else}
+			<OperationFormOptional {operationId} {schema} {currentId}/>
+		{/if}
 	{:else if "anyOf" in schema}
 		<OperationFormHeader {schema} />
 		<OperationFormAnyOf {operationId} schemas={schema.anyOf} {currentId}/>
