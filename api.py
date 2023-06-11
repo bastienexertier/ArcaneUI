@@ -241,15 +241,45 @@ class Bond(BaseModel):
 	coupons:list[int]
 
 
-class Portfolio(BaseModel):
-	"""A portfolio"""
+class Portfolio0(BaseModel):
+	"""Equity|Bond"""
+	code:str
+	holdings:Equity|Bond
+
+@app.post('/portfolios0', tags=['finance'])
+def add_portfolio0(company:str, portfolio:Portfolio0) -> Portfolio0:
+	return portfolio
+
+
+class Portfolio1(BaseModel):
+	"""list[Equity|Bond]"""
 	code:str
 	holdings:list[Equity|Bond]
 
-
-@app.post('/portfolios', tags=['finance'])
-def add_portfolio(company:str, portfolio:Portfolio) -> Portfolio:
+@app.post('/portfolios1', tags=['finance'])
+def add_portfolio1(company:str, portfolio:Portfolio1) -> Portfolio1:
 	return portfolio
+
+
+class Portfolio2(BaseModel):
+	"""list[Equity]|list[Bond]"""
+	code:str
+	holdings:list[Equity]|list[Bond]
+
+@app.post('/portfolios2', tags=['finance'])
+def add_portfolio2(company:str, portfolio:Portfolio2) -> Portfolio2:
+	return portfolio
+
+
+class Portfolio3(BaseModel):
+	"""list[Equity]|Bond"""
+	code:str
+	holdings:list[Equity]|Bond
+
+@app.post('/portfolios3', tags=['finance'])
+def add_portfolio3(company:str, portfolio:Portfolio3) -> Portfolio3:
+	return portfolio
+
 
 @app.get('/portfolios', tags=['finance'])
 def get_portfolios(name:Annotated[list[str], Query()]) -> list[str]:

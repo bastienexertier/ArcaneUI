@@ -16,15 +16,16 @@
 </script>
 
 <OperationFormHeader {schema} />
-<hr>
 
-{#each itemIds as itemId}
-	{#if itemId !== null}
-		<div class="nested-form">
-			<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} />
-		</div>
-	{/if}
-{/each}
+{#if itemIds.length !== 0}
+	<div class="nested-form">
+		{#each itemIds as itemId}
+			{#if itemId !== null}
+				<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} />
+			{/if}
+		{/each}
+	</div>
+{/if}
 
 <div>
 	<div class="btn-add" on:click={handleAdd}>

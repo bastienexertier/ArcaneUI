@@ -9,7 +9,6 @@
 
 <div class="nested-form">
 	<OperationFormHeader {schema} />
-	<hr>
 	{#each Object.entries(schema.properties) as [propertyId, property]}
 		<OperationFormBase {operationId} schema={property} currentId={`${currentId}.${propertyId}`}/>
 	{/each}

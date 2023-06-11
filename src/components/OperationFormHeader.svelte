@@ -1,9 +1,15 @@
 <script>
 	export let schema;
+	let title = schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name);
 </script>
 
-<span class="title">{schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name)}</span>
-{#if schema.description}<span class="help">({schema.description})</span>{/if}
+{#if title}
+	<span class="title">{title}</span>
+	{#if schema.description}
+		<span class="help">({schema.description})</span>
+	{/if}
+	<hr>
+{/if}
 
 <style>
 	.title {

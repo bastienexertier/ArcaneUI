@@ -11,7 +11,7 @@
 <div class="d-flex flex-row choices">
 	{#each schemas as schema, index}
 		<div class="me-2" class:selected={index === selected} on:click={() => selected = index}>
-			{schema.title || schema.type}
+			{schema.title || (schema.items && schema.items.title) || schema.type}
 		</div>
 	{/each}
 </div>

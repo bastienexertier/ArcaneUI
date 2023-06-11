@@ -25,6 +25,7 @@
 	{:else if schema.type === "object"}
 		<OperationFormObject {operationId} {schema} {currentId}/>
 	{:else if "anyOf" in schema}
+		<OperationFormHeader {schema} />
 		<OperationFormAnyOf {operationId} schemas={schema.anyOf} {currentId}/>
 	{/if}
 {:else}
