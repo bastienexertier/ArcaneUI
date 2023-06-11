@@ -1,4 +1,5 @@
 <script>
+	import OperationFormHeader from './OperationFormHeader.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
 
 	export let operationId;
@@ -6,6 +7,10 @@
 	export let currentId;
 </script>
 
-{#each Object.entries(schema.properties) as [propertyId, property]}
-	<OperationFormBase {operationId} schema={property} currentId={`${currentId}.${propertyId}`}/>
-{/each}
+<div class="nested-form">
+	<OperationFormHeader {schema} />
+	<hr>
+	{#each Object.entries(schema.properties) as [propertyId, property]}
+		<OperationFormBase {operationId} schema={property} currentId={`${currentId}.${propertyId}`}/>
+	{/each}
+</div>

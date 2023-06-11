@@ -1,6 +1,7 @@
 <script>
 	import PlusCircleFill from "svelte-bootstrap-icons/lib/PlusCircleFill.svelte";
 
+	import OperationFormHeader from './OperationFormHeader.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
 	import OperationFormInput from './OperationFormInput.svelte';
 
@@ -14,9 +15,14 @@
 	const handleDelete = id => {itemIds[id] = null;itemIds=itemIds;};
 </script>
 
+<OperationFormHeader {schema} />
+<hr>
+
 {#each itemIds as itemId}
 	{#if itemId !== null}
-		<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} />
+		<div class="nested-form">
+			<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} />
+		</div>
 	{/if}
 {/each}
 

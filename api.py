@@ -30,11 +30,21 @@ class UserGender(enum.Enum):
 	MALE = 'Male'
 	FEMALE = 'Female'
 
+class Country(enum.Enum):
+	JAPAN='Japan'
+	FRANCE='France'
+	IRAK='Irak'
+
+class Address(BaseModel):
+	street_number:int
+	country:Country
+
 class User(BaseModel):
 	name:str
 	age:int
 	gender:UserGender
 	is_cool:bool
+	address:Address|None
 	favorite_color:str = 'Red'
 
 class UserDeleteResponse(BaseModel):
