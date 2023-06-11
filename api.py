@@ -47,6 +47,7 @@ class User(BaseModel):
 	is_cool:bool
 	user_address:Address
 	mom_address:Address|None# = Field(default=None, title="Mom Address")
+	friends_adresses:list[Address]|None
 	favorite_animal:str|None
 	favorite_number:int|None = 5
 	favorite_color:str|None = 'Red'

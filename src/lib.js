@@ -67,14 +67,16 @@ function _fix(data, schema, required) {
 	}
 
 	for (let [propertyId, property] of Object.entries(schema.properties)) {
-		//console.log(propertyId, property, data);
 		let propertyRequired = schema.required.includes(propertyId);
+		//console.log(propertyId, propertyRequired, property, data);
 		if (property.type === "object") {
 			_fix(data[propertyId], property, propertyRequired);
 			continue;
 		}
-		if (property.type === "array") {
+		if (property.type === "array" && propertyRequired) {
 			data[propertyId] = data[propertyId] || [];
+		}
+		if (property.type === "array" && data[propertyId] !== undefined) {	
 			for (let item of data[propertyId]) {
 				_fix(item, property.items, propertyRequired);
 			}

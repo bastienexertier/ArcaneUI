@@ -2,7 +2,7 @@
 	import PlusCircleFill from "svelte-bootstrap-icons/lib/PlusCircleFill.svelte";
 
 	import OperationFormHeader from './OperationFormHeader.svelte'
-	import OperationFormBase from './OperationFormBase.svelte';
+	import OperationFormArray from './OperationFormArray.svelte';
 
 	export let operationId;
 	export let schema;
@@ -11,7 +11,6 @@
 	let enabled = false;
 
 	const handleAdd = () => enabled = true;
-	const handleDelete = () => enabled = false;
 
 	console.log(schema);
 </script>
@@ -19,7 +18,7 @@
 <OperationFormHeader {schema} />
 
 {#if enabled}
-	<OperationFormBase {operationId} {schema} required={true} {currentId} {handleDelete} />
+	<OperationFormArray {operationId} {schema} {currentId} />
 {:else}
 	<div>
 		<div class="btn-add" on:click={handleAdd}>

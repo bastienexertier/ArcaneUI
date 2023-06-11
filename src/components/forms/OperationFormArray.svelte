@@ -14,13 +14,11 @@
 	const handleDelete = id => {itemIds[id] = null;itemIds=itemIds;};
 </script>
 
-<OperationFormHeader {schema} />
-
-{#if itemIds.length !== 0}
+{#if itemIds.filter(e => e !== null).length !== 0}
 	<div class="nested-form">
 		{#each itemIds as itemId}
 			{#if itemId !== null}
-				<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} />
+				<OperationFormBase {operationId} schema={schema.items} currentId={`${currentId}.${itemId}`} {itemId} {handleDelete} required/>
 			{/if}
 		{/each}
 	</div>

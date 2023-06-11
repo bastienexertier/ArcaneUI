@@ -3,10 +3,11 @@
 	import OperationFormDeleteButton from './OperationFormDeleteButton.svelte'
 
 	import OperationFormObject from './OperationFormObject.svelte';
-	import OperationFormOptional from './OperationFormOptional.svelte';
 	import OperationFormArray from './OperationFormArray.svelte';
 	import OperationFormAnyOf from './OperationFormAnyOf.svelte';
 	import OperationFormInput from './OperationFormInput.svelte';
+	import OperationFormObjectOptional from './OperationFormObjectOptional.svelte';
+	import OperationFormArrayOptional from './OperationFormArrayOptional.svelte';
 
 	export let operationId;
 	export let schema;
@@ -25,12 +26,17 @@
 {#if isNested}
 	<OperationFormDeleteButton {itemId} {handleDelete} />
 	{#if schema.type === "array"}
-		<OperationFormArray {operationId} {schema} {currentId}/>
+		{#if required}
+			<OperationFormHeader {schema} />
+			<OperationFormArray {operationId} {schema} {currentId}/>
+		{:else}
+			<OperationFormArrayOptional {operationId} {schema} {currentId}/>
+		{/if}
 	{:else if schema.type === "object"}
 		{#if required}
 			<OperationFormObject {operationId} {schema} {required} {currentId}/>
 		{:else}
-			<OperationFormOptional {operationId} {schema} {currentId}/>
+			<OperationFormObjectOptional {operationId} {schema} {currentId}/>
 		{/if}
 	{:else if "anyOf" in schema}
 		<OperationFormHeader {schema} />
