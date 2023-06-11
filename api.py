@@ -110,15 +110,15 @@ class Filters(BaseModel):
 
 
 @app.post('/users', response_model=list[UserOut], tags=['users'])
-def get_users_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter) -> list[UserOut]:
-	"""Returns every registered user"""
-	return [UserOut(**u.dict()) for u in user_filter.filter(list(users.values()))]
-
-@app.post('/users/filter/1', response_model=list[UserOut], tags=['users'])
-def get_users_many_filters(filters:Filters) -> list[UserOut]:
+def get_users_multiple_filters(filters:Filters) -> list[UserOut]:
 	"""Returns every registered user"""
 	_users = list(users.values())
 	return [UserOut(**u.dict()) for u in filters.filter(_users)]
+
+@app.post('/users/filter/1', response_model=list[UserOut], tags=['users'])
+def get_users_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter) -> list[UserOut]:
+	"""Returns every registered user"""
+	return [UserOut(**u.dict()) for u in user_filter.filter(list(users.values()))]
 
 @app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
 def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|NameFilter]) -> list[UserOut]:
