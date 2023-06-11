@@ -164,6 +164,12 @@ def get_user(name:str, favorite_color:str|None='Red') -> User:
 # 	users[user.name] = user
 # 	return user
 
+@app.post('/users/buld', response_model=list[User], tags=['users'])
+def add_users_in_bulk(users:list[User]) -> list[User]:
+	"""Adds many new users"""
+	print(users)
+	return users
+
 @app.post('/users/random', response_model=User, tags=['users'])
 def post_random_user() -> User:
 	"""Adds a new user"""

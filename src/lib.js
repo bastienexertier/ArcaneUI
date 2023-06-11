@@ -23,21 +23,19 @@ export function unflattenFormData(data) {
 
 const isInteger = s => /^\d+$/.test(s);
 
-function _unflatten(previous, path, index, value) {
+function _unflatten(prevNode, path, index, value) {
 	if (index >= path.length) { return value; }
 
 	let prevKey = path[index-1];
 	let currKey = path[index];
-	let newNode = previous[prevKey] || (isInteger(currKey)? []:{});
+	let currNode = prevNode[prevKey] || (isInteger(currKey)? []:{});
 
-	//console.log(index, prevKey, currKey, newNode);
+	let nextNode = _unflatten(currNode, path, index+1, value);
 
-	let res = _unflatten(newNode, path, index+1, value);
+	currNode[currKey] = nextNode;
+	prevNode[prevKey] = currNode;
 
-	newNode[currKey] = res;
-	previous[prevKey] = newNode;
-
-	return newNode;
+	return currNode;
 }
 
 function fixFormData(data, schema, required) {
@@ -67,7 +65,7 @@ function _fix(data, schema, required) {
 	}
 
 	if (schema.type === "array") {
-		for (let item of data) {
+		for (let item of removeNullFromArrayInPlace(data)) {
 			_fix(item, schema.items, required);
 		}
 		return;
@@ -84,7 +82,7 @@ function _fix(data, schema, required) {
 			data[propertyId] = data[propertyId] || [];
 		}
 		if (property.type === "array" && data[propertyId] !== undefined) {	
-			for (let item of data[propertyId]) {
+			for (let item of removeNullFromArrayInPlace(data[propertyId])) {
 				_fix(item, property.items, propertyRequired);
 			}
 			continue;
@@ -102,6 +100,19 @@ function _fix(data, schema, required) {
 			delete data[propertyId];
 		}
 	}
+}
+
+function removeNullFromArrayInPlace(array) {
+	let nNull = 0;
+	for (let i = 0; i < array.length; i++) {
+		if (array[i] === null || array[i] === undefined) {
+			nNull += 1;
+		} else if (nNull != 0) {
+			array[i-nNull] = array[i];
+		}
+	}
+	array.length -= nNull;
+	return array;
 }
 
 
