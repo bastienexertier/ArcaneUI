@@ -16,12 +16,11 @@
 
 	const handleAdd = () => enabled = true;
 	const handleDelete = () => enabled = false;
-
-	// console.log('ObjectOptional', schema, enabled);
 </script>
 
 {#if enabled}
 	<OperationFormBase {operationId} {schema} {currentId} required={true} {title} {description} {handleDelete} />
+	<input type="hidden" value="true" name={currentId + '.'}/>
 {:else}
 	<Header {title} {description} {schema} />
 	<AddButton {handleAdd} />

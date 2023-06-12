@@ -49,11 +49,19 @@ function fixFormData(data, schema, required) {
 }
 
 function _fix(data, schema, required) {
-	//console.log('_fix', data, schema, required);
+	// console.log('_fix', data, schema, required);
 
-	if ((data === undefined || Object.keys(data).length === 0) && !required) { return; }
+	if (data === undefined) { return; }
 	if (!schema || (!schema.type && !("anyOf" in schema))) { return; }
 	if (schema.type === "integer") { return; }
+
+	if (!required) {
+		// the empty string as a key to mean the object is
+		// provided by the user (form was shown)
+		let isPresent = data[''];
+		delete data[''];
+		if (!isPresent) { return; }
+	}
 
 	if ("anyOf" in schema) {
 		if (data && "anyOf" in data) {
