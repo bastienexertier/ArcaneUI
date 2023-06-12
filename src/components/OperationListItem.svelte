@@ -13,7 +13,7 @@
 	let actionName = operation.summary || operation.operationId;
 </script>
 
-<div class:active={isActive} class="mt-3 p-2 box operation-list-item text-white border-{bootstrapClassName}" on:click={() => handleClick(operation)} >
+<div class:active={isActive} class="mt-3 p-2 box operation-item border-{bootstrapClassName}" on:click={() => handleClick(operation)} >
 	<div>
 		<h5>{actionName}</h5>
 		{#if operation.deprecated}
@@ -30,7 +30,7 @@
 	hr {
 		margin: 0 0 8px 0;
 	}
-	.operation-list-item {
+	.operation-item {
 		cursor: pointer;
 		border-bottom: 7px solid;
 	}
@@ -45,4 +45,3 @@
 		background-color: #4c5566;
 	}
 </style>
-
