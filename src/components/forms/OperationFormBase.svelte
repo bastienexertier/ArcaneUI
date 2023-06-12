@@ -17,7 +17,7 @@
 	export let itemId = null;
 	export let handleDelete = null;
 
-	let isNested = schema.type === "array" || schema.type === "object" || "anyOf" in schema;
+	let isNested = schema.type === "array" || schema.type === "object" || "anyOf" in schema || "allOf" in schema;
 	let title = schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name);
 
 	//console.log(title, required, schema);
@@ -25,7 +25,11 @@
 
 {#if isNested}
 	<OperationFormDeleteButton {itemId} {handleDelete} />
-	{#if schema.type === "array"}
+	{#if "allOf" in schema}
+		{#each schema.allOf as subSchema}
+			<svelte:self {operationId} schema={subSchema} {currentId} required/>
+		{/each}
+	{:else if schema.type === "array"}
 		{#if required}
 			<OperationFormHeader {schema} />
 			<OperationFormArray {operationId} {schema} {currentId}/>

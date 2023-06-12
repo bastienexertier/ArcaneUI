@@ -21,7 +21,7 @@
 
 {#if activeTag}
 {#key activeTag}
-		<OperationTab {openapi} operations={activeTag.operations}/>
+	<OperationTab {openapi} operations={activeTag.operations}/>
 {/key}
 {/if}
 
