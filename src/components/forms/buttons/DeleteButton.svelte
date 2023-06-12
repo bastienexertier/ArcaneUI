@@ -6,7 +6,7 @@
 </script>
 
 {#if handleDelete !== null}
-	<button class="btn-delete" on:click={() => handleDelete(itemId)}>
+	<button class="btn-delete" on:click|preventDefault={() => handleDelete(itemId)}>
 		<XCircleFill width={22} height={22} />
 	</button>
 {/if}

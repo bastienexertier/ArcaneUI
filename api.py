@@ -42,6 +42,9 @@ class Address(BaseModel):
 	street_number:int
 	country:Country
 
+class Test(BaseModel):
+	address:Address
+
 class User(BaseModel):
 	name:str
 	age:int
@@ -49,6 +52,8 @@ class User(BaseModel):
 	is_cool:bool
 	user_address:Address
 	mom_address:Address|None = Field(default=None, title="Mom Address")
+	test:Test|None = Field(default=None, title="Test")
+	siblings_adresses:list[Address]
 	friends_adresses:list[Address]|None
 	favorite_animal:str|None
 	favorite_number:int|None = 5
@@ -74,7 +79,8 @@ def random_user(_:int):
 		gender=choice((UserGender.MALE, UserGender.FEMALE)),
 		is_cool=choice((True, False)),
 		favorite_color=choice(('Red', 'Blue', 'Green')),
-		user_address=Address(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK)))
+		user_address=Address(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK))),
+		siblings_adresses=[]
 	)
 
 users = {user.name: user for user in map(random_user, range(200))}

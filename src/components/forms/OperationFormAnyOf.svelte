@@ -5,6 +5,9 @@
 	export let schemas;
 	export let currentId;
 
+	export let title = null;
+	export let description = null;
+
 	let selected = null;
 	let name = currentId + '.anyOf';
 
@@ -30,7 +33,7 @@
 
 {#key selected}
 	{#if selected !== null}
-		<OperationFormBase {operationId} schema={schemas[selected]} {currentId} {handleDelete} required/>
+		<OperationFormBase {operationId} schema={schemas[selected]} {currentId} {title} {description} {handleDelete} required/>
 	{/if}
 {/key}
 

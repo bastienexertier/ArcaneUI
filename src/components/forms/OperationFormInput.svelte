@@ -16,7 +16,7 @@
 	//let required = schema.required || !('default' in schema);
 	let inputType = getInputType(schema);
 
-	console.log(id, name, schema, required);
+	//console.log(id, name, schema, required);
 </script>
 
 

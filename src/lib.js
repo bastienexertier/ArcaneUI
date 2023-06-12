@@ -376,11 +376,32 @@ function fillSchema(openapi) {
 	}
 }
 
+function walkSchemas(openapi, visitors) {
+	Object.values(openapi.components.schemas).forEach(schema => visitors.forEach(visitor => visitor(schema)));
+}
+
+function setRequired(schema) {
+	Object.entries(schema.properties).forEach(([key, property]) => {
+		if (property.required === undefined) {
+			property.required = schema.required && schema.required.includes(key);
+		}
+	})
+}
+
+function fixSchemas(openapi) {
+	walkSchemas(openapi, [
+		// schema => console.log(schema),
+		schema => schema.properties = schema.properties || {},
+		schema => setRequired(schema)
+	]);
+}
+
 export function decorateOpenApi(documentUrl, openapi) {
 	console.log(openapi);
 		addServer(documentUrl, openapi);
 		linkOperationToTags(openapi);
 		fillSchema(openapi);
+		fixSchemas(openapi);
 	console.log(openapi);
 
 	return openapi;

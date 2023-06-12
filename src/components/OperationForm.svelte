@@ -40,7 +40,7 @@
 
 		<div>
 			{#if bodySchema}
-				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} />
+				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} currentId={""} />
 			{/if}
 		</div>
 

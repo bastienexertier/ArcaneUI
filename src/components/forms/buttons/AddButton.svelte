@@ -5,7 +5,7 @@
 </script>
 
 {#if handleAdd !== null}
-	<button class="btn-add" on:click={handleAdd}>
+	<button class="btn-add" on:click|preventDefault={handleAdd}>
 		<PlusCircleFill width={22} height={22} />
 	</button>
 {/if}

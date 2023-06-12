@@ -1,15 +1,19 @@
 <script>
-	import OperationFormHeader from './OperationFormHeader.svelte'
+	import Header from './headers/Header.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
 
 	export let operationId;
 	export let schema;
 	export let currentId;
+
+	export let title = null;
+	export let description = null;
 </script>
 
 <div class="nested-form">
-	<OperationFormHeader {schema} />
+	<Header {title} {description} {schema} />
 	{#each Object.entries(schema.properties) as [propertyId, property]}
-		<OperationFormBase {operationId} schema={property} required={schema.required && schema.required.includes(propertyId)} currentId={`${currentId}.${propertyId}`}/>
+		{@const currentId = `${currentId}.${propertyId}` }
+		<OperationFormBase {operationId} schema={property} required={property.required} {currentId} />
 	{/each}
 </div>
