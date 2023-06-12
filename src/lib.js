@@ -355,12 +355,20 @@ function linkOperationToTags(openapi) {
 
 function fillSchema(openapi) {
 
-	const emptyParameters = [];
-
 	for (let endpoint of Object.values(openapi.paths)) {
 		for (let [method, operation] of Object.entries(endpoint)) {
+
 			if (!openapiHttpMethods.includes(method)) { continue; }
-			operation.parameters = operation.parameters || emptyParameters;
+
+			operation.parameters = operation.parameters || [];
+
+			if (endpoint.parameters) {
+				let nonOverridenSharedParameters = endpoint.parameters.filter(
+					sharedParameter => !operation.parameters.some(p => p.name == sharedParameter.name)
+				);
+				operation.parameters.unshift(...nonOverridenSharedParameters);
+			}
+
 			for (let parameter of operation.parameters) {
 				parameter.schema.name = parameter.schema.name || parameter.name;
 			}
