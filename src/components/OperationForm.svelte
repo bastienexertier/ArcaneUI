@@ -25,7 +25,9 @@
 			{#if operation.description}<span>{operation.description}</span>{/if}
 		</div>
 		<div class="d-flex icons">
-			<div on:click={() => handleFormClose()}><XCircleFill width={22} height={22} /></div>
+			<button on:click|preventDefault={() => handleFormClose()}>
+				<XCircleFill width={22} height={22} />
+			</button>
 		</div>
 	</div>
 	<hr>
@@ -62,7 +64,8 @@
 	button {
 		width: 15%;
 	}
-	.icons div {
+	.icons button {
+		all: unset;
 		cursor: pointer;
 		margin-right: .5rem !important;
 		margin-left: .5rem !important;

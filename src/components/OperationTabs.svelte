@@ -4,7 +4,8 @@
 
 	export let openapi;
 
-	let activeTag = openapi.tags[0];
+	let urlAnchor = window.location.hash.substr(1);
+	let activeTag = openapi.tags.find(t => t.name === urlAnchor) || openapi.tags[0];
 
 	function handleClick(tag) {
 		activeTag = tag;
@@ -14,7 +15,7 @@
 <ul>
 	{#each openapi.tags as tag}
 		<li class={activeTag.name === tag.name ? 'active' : ''}>
-			<span on:click={() => handleClick(tag)}>{capitalizeFirstLetter(tag.name)} ({tag.operations.length})</span>
+			<a href=#{tag.name} on:click={() => handleClick(tag)}>{capitalizeFirstLetter(tag.name)} ({tag.operations.length})</a>
 		</li>
 	{/each}
 </ul>
@@ -38,7 +39,9 @@
 	li {
 		margin-bottom: -1px;
 	}
-	span {
+	a {
+		color: white;
+		text-decoration: none;
 		border: 1px solid transparent;
 		border-top-left-radius: 0.25rem;
 		border-top-right-radius: 0.25rem;
@@ -46,10 +49,10 @@
 		padding: 0.5rem 1rem;
 		cursor: pointer;
 	}
-	span:hover {
+	a:hover {
 		border-color: dimgrey dimgrey lightgrey;
 	}
-	li.active > span {
+	li.active > a {
 		background-color: #363c48;
 	}
 </style>
