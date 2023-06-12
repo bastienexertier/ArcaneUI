@@ -266,7 +266,7 @@ export function getResponseSchema(operationResponses, httpResponse) {
 	}
 
 	if ('application/json' in responseType.content) {
-		return responseType.content['application/json'];
+		return responseType.content['application/json'].schema;
 	}
 
 	for (let [contentType, contentSchema] of Object.entries(responseType.content)) {
