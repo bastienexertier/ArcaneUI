@@ -17,11 +17,11 @@
 	const handleAdd = () => enabled = true;
 	const handleDelete = () => enabled = false;
 
-	console.log('ObjectOptional', schema, enabled);
+	// console.log('ObjectOptional', schema, enabled);
 </script>
 
 {#if enabled}
-	<OperationFormBase {operationId} {schema} {currentId} {title} {description} {handleDelete} />
+	<OperationFormBase {operationId} {schema} {currentId} required={true} {title} {description} {handleDelete} />
 {:else}
 	<Header {title} {description} {schema} />
 	<AddButton {handleAdd} />

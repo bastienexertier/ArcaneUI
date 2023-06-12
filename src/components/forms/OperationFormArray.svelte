@@ -23,7 +23,7 @@
 		{#each itemIds as itemId}
 			{#if itemId !== null}
 				{@const currentId = `${currentId}.${itemId}` }
-				<OperationFormBase {operationId} schema={schema.items} {currentId} {itemId} {title} {description} {handleDelete} required/>
+				<OperationFormBase {operationId} schema={schema.items} {currentId} required={true} {itemId} {title} {description} {handleDelete}/>
 			{/if}
 		{/each}
 	</div>

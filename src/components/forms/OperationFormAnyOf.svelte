@@ -33,7 +33,7 @@
 
 {#key selected}
 	{#if selected !== null}
-		<OperationFormBase {operationId} schema={schemas[selected]} {currentId} {title} {description} {handleDelete} required/>
+		<OperationFormBase {operationId} schema={schemas[selected]} {currentId} required={true} {title} {description} {handleDelete}/>
 	{/if}
 {/key}
 

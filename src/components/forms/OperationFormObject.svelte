@@ -13,7 +13,8 @@
 <div class="nested-form">
 	<Header {title} {description} {schema} />
 	{#each Object.entries(schema.properties) as [propertyId, property]}
-		{@const currentId = `${currentId}.${propertyId}` }
-		<OperationFormBase {operationId} schema={property} required={property.required} {currentId} />
+		{@const _currentId = `${currentId}.${propertyId}` }
+		{@const required = schema.required && schema.required.includes(propertyId) }
+		<OperationFormBase {operationId} schema={property} {required} currentId={_currentId} />
 	{/each}
 </div>
