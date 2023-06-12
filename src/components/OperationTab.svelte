@@ -12,6 +12,9 @@
 	let activeOperation = null;
 	let operationResult = null;
 
+	// console.log(operations);
+	// console.log(operations.map(o => o.operationId));
+
 	function handleClick(operation) {
 		showForm = true;
 		activeOperation = operation;
@@ -54,7 +57,7 @@
 <div class="row">
 	<div class="col-3 mb-5">
 		{#each operations as operation (operation.operationId)}
-			<OperationListItem {operation} {openapi} {handleClick} isActive={operation == activeOperation} />
+			<OperationListItem {operation} {handleClick} isActive={operation == activeOperation} />
 		{/each}
 	</div>
 

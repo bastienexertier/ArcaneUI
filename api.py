@@ -48,7 +48,7 @@ class User(BaseModel):
 	gender:UserGender
 	is_cool:bool
 	user_address:Address
-	mom_address:Address|None# = Field(default=None, title="Mom Address")
+	mom_address:Address|None = Field(default=None, title="Mom Address")
 	friends_adresses:list[Address]|None
 	favorite_animal:str|None
 	favorite_number:int|None = 5
@@ -113,20 +113,22 @@ class Filters(BaseModel):
 def get_users_multiple_filters(filters:Filters) -> list[UserOut]:
 	"""Returns every registered user"""
 	_users = list(users.values())
-	return [UserOut(**u.dict()) for u in filters.filter(_users)]
+	if filters:
+		_users = filters.filter(_users)
+	return [UserOut(**u.dict()) for u in _users]
 
 @app.post('/users/filter/1', response_model=list[UserOut], tags=['users'])
 def get_users_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter) -> list[UserOut]:
 	"""Returns every registered user"""
 	return [UserOut(**u.dict()) for u in user_filter.filter(list(users.values()))]
 
-# @app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
-# def get_users_zero_or_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter|None) -> list[UserOut]:
-# 	"""Returns every registered user"""
-# 	_users = list(users.values())
-# 	if user_filter:
-# 		_users = user_filter.filter(_users)
-# 	return [UserOut(**u.dict()) for u in _users]
+@app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
+def get_users_zero_or_one_filter(user_filter:GenderFilter|None, coolness_filter:CoolnessFilter|None=None, name_filter:NameFilter|None=None) -> list[UserOut]:
+	"""Returns every registered user"""
+	_users = list(users.values())
+	if user_filter:
+		_users = user_filter.filter(_users)
+	return [UserOut(**u.dict()) for u in _users]
 
 @app.post('/users/filter/3', response_model=list[UserOut], tags=['users'])
 def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|NameFilter]) -> list[UserOut]:
@@ -137,7 +139,7 @@ def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|Nam
 	return [UserOut(**u.dict()) for u in _users]
 
 @app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
-def get_users_by_gender(gender:UserGender) -> list[User]:
+def get_users_by_gender(gender:UserGender=UserGender.FEMALE) -> list[User]:
 	"""Returns every registered user of the selected gender"""
 	return [user for user in users.values() if user.gender == gender]
 
@@ -155,7 +157,7 @@ def get_users_by_name_query(query:str|None='') -> list[UserOut]:
 def get_user(name:str, favorite_color:str|None='Red') -> User:
 	if name in users:
 		return users[name]
-	raise HTTPException(status_code=404)
+	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
 # @app.post('/users', response_model=User, tags=['users'])
 # def post_user(user:User) -> User:
@@ -173,8 +175,7 @@ def add_users_in_bulk(users:list[User]) -> list[User]:
 @app.post('/users/random', response_model=User, tags=['users'])
 def post_random_user() -> User:
 	"""Adds a new user"""
-	name = choice(names)
-	user = random_user(name)
+	user = random_user(None)
 	users[user.name] = user
 	return user
 
@@ -204,6 +205,7 @@ def purge_users():
 
 class TaskStatus(enum.Enum):
 	""""""
+	DEFAULT = "DEFAULT"
 	TODO = "TODO"
 	IN_PROGRESS = "IN_PROGRESS"
 	DONE = "DONE"
@@ -388,10 +390,16 @@ def get_instrument(id:int|bool):
 def add_traders(traders:list[User]):
 	return traders
 
-# class Derivative(BaseModel):
-# 	name:str
-# 	inner:Union['Derivative',None]
+@app.get('/maths/add', tags=['maths'])
+def add(numbers:Annotated[list[int], Query()]) -> int:
+	return sum(numbers)
 
-# @app.post('/instruments/derivative', tags=['instruments'])
-# def add_derivative_instrument(derivative:Derivative):
-# 	return derivative
+# class Division(BaseModel):
+# 	dividend:int
+# 	quotient:int
+
+# @app.get('/maths/divide', tags=['maths'])
+# def divide(division:Annotated[Division, Query()]) -> float:
+# 	return division.dividend/division.quotient
+
+

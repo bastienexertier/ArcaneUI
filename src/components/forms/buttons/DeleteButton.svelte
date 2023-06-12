@@ -6,15 +6,18 @@
 </script>
 
 {#if handleDelete !== null}
-	<div class="delete" on:click={() => handleDelete(itemId)}>
+	<button class="btn-delete" on:click={() => handleDelete(itemId)}>
 		<XCircleFill width={22} height={22} />
-	</div>
+	</button>
 {/if}
 
 <style>
-	.delete {
+	.btn-delete {
+		all: unset;
 		cursor: pointer;
 		height: 0px;
 		float: right;
+		margin: auto;
+		display: block;
 	}
 </style>

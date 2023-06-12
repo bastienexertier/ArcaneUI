@@ -1,5 +1,4 @@
 <script>
-	export let openapi;
 	export let operation;
 	export let handleClick;
 	export let isActive = false;

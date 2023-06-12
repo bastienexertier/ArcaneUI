@@ -25,6 +25,7 @@
 
 	let schema = getResponseSchema(operation.responses, response);
 	if (!schema || (!schema.properties && !(schema.items && schema.items.properties))) {
+		console.log('schemaFromObject!', operation.responses, response);
 		schema = schemaFromObject(content);
 	}
 

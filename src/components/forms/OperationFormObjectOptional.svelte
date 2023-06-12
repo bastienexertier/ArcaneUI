@@ -3,6 +3,7 @@
 
 	import OperationFormHeader from './OperationFormHeader.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
+	import AddButton from './buttons/AddButton.svelte';
 
 	export let operationId;
 	export let schema;
@@ -19,15 +20,5 @@
 	<OperationFormBase {operationId} {schema} required={true} {currentId} {handleDelete} />
 {:else}
 	<OperationFormHeader {schema} />
-	<div>
-		<div class="btn-add" on:click={handleAdd}>
-			<PlusCircleFill width={22} height={22} />
-		</div>
-	</div>
+	<AddButton {handleAdd} />
 {/if}
-
-<style>
-	.btn-add {
-		text-align: center;
-	}
-</style>

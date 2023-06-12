@@ -15,6 +15,8 @@
 	let title = schema.title || schema.name || name.split('.').slice(-1);// || parameter.name;
 	//let required = schema.required || !('default' in schema);
 	let inputType = getInputType(schema);
+
+	console.log(id, name, schema, required);
 </script>
 
 

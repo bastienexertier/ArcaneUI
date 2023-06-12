@@ -46,9 +46,6 @@
 		width: 0px;
 		opacity: 0;
 	}
-	.selected {
-		text-decoration: underline;
-	}
 	.hidden {
 		display: none;
 	}

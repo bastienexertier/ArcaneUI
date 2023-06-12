@@ -1,6 +1,5 @@
 <script>
 	import OperationFormHeader from './OperationFormHeader.svelte'
-	import OperationFormDeleteButton from './OperationFormDeleteButton.svelte'
 
 	import OperationFormObject from './OperationFormObject.svelte';
 	import OperationFormArray from './OperationFormArray.svelte';
@@ -8,6 +7,8 @@
 	import OperationFormInput from './OperationFormInput.svelte';
 	import OperationFormObjectOptional from './OperationFormObjectOptional.svelte';
 	import OperationFormArrayOptional from './OperationFormArrayOptional.svelte';
+	
+	import DeleteButton from './buttons/DeleteButton.svelte'
 
 	export let operationId;
 	export let schema;
@@ -20,11 +21,11 @@
 	let isNested = schema.type === "array" || schema.type === "object" || "anyOf" in schema || "allOf" in schema;
 	let title = schema.title || (schema.xml && schema.xml.name) || (schema.items && schema.items.xml && schema.items.xml.name);
 
-	//console.log(title, required, schema);
+	console.log(title, required, schema);
 </script>
 
 {#if isNested}
-	<OperationFormDeleteButton {itemId} {handleDelete} />
+	<DeleteButton {itemId} {handleDelete} />
 	{#if "allOf" in schema}
 		{#each schema.allOf as subSchema}
 			<svelte:self {operationId} schema={subSchema} {currentId} required/>
@@ -49,7 +50,7 @@
 {:else}
 	<div>
 		<OperationFormInput id={operationId} name={currentId} {schema} {required}/>
-		<!-- <OperationFormDeleteButton {itemId} {handleDelete} /> -->
+		<!-- <DeleteButton {itemId} {handleDelete} /> -->
 	</div>
 {/if}
 
