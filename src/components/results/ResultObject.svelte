@@ -5,12 +5,13 @@
 	export let content;
 </script>
 
+<hr>
 <table class="table table-borderless">
 	<tbody>
 		{#each Object.entries(properties) as [key, property]}
 			<tr>
 				<td>{property.title || key}:</td>
-				<td><ItemValue {property} value={content[key]} /></td>
+				<td><ItemValue type={property.type} value={content[key]} /></td>
 			</tr>
 		{/each}
 	</tbody>

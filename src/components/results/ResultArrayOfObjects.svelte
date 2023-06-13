@@ -20,7 +20,7 @@
 			{#each content as item}
 				<tr on:click={() => handleGet(item)}>
 					{#each Object.keys(properties) as propertyKey}
-						<td><ItemValue property={properties[propertyKey]} value={item[propertyKey]} /></td>
+						<td><ItemValue type={properties[propertyKey].type} value={item[propertyKey]} /></td>
 					{/each}
 				</tr>
 			{/each}

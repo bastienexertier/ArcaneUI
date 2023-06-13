@@ -409,6 +409,10 @@ def add_traders(traders:list[User]):
 def add(numbers:Annotated[list[int], Query()]) -> int:
 	return sum(numbers)
 
+@app.get('/maths/range', tags=['maths'])
+def get_range(up_to:int) -> list[int]:
+	return list(range(up_to))
+
 # class Division(BaseModel):
 # 	dividend:int
 # 	quotient:int

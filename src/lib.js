@@ -235,13 +235,20 @@ export function getInputType(property) {
 	}[property.type];
 }
 
-export function schemaFromObject(o) {
+export function chooseBestSchema(schemaFromResponses, responseContent) {
+	if (schemaFromResponses !== null && Object.keys(schemaFromResponses).length !== 0) return schemaFromResponses;
+	return schemaFromObject(responseContent);
+}
+
+function schemaFromObject(o) {
 
 	if (o === null) return null;
 
 	if (Array.isArray(o)) {
 		return schemaFromArray(o);
 	}
+
+	if (typeof o !== 'object') return { title: "Values", type: "string" };
 
 	let properties = {};
 	let schema = {
@@ -263,7 +270,7 @@ function schemaFromArray(arr) {
 	return {
 		title: "Array",
 		type: "array",
-		items: schemaFromObject(arr[0] || {})
+		items: schemaFromObject(arr.length === 0? {} : arr[0])
 	};
 }
 
@@ -294,6 +301,8 @@ export function createGetHandler(openapi, operation, properties, currentUrl, han
 
 	let getUrl = null;
 	let getOperation = null;
+
+	if (properties === null) return;
 
 	let operationPath = operation.path.replace(/\/$/, '');
 

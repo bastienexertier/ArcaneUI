@@ -6,9 +6,10 @@
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
 	import ResultObject from './results/ResultObject.svelte';
-	import ResultArray from './results/ResultArray.svelte';
+	import ResultArrayOfObjects from './results/ResultArrayOfObjects.svelte';
+	import ResultArrayOfValues from './results/ResultArrayOfValues.svelte';
 
-	import { getOperationCurrentResponse, getResponseSchema, schemaFromObject, createGetHandler } from '../lib.js';
+	import { getOperationCurrentResponse, getResponseSchema, chooseBestSchema, createGetHandler } from '../lib.js';
 
 	export let openapi;
 	export let operation;
@@ -30,18 +31,12 @@
 	}
 
 	let operationCurrentResponse = getOperationCurrentResponse(operation, response);
-	let operationCurrentResponseSchema = getResponseSchema(operationCurrentResponse);
-	let schema = operationCurrentResponseSchema;
-
-	if (!schema || (!schema.properties && !(schema.items && schema.items.properties))) {
-		console.log('schemaFromObject!', operation.responses, response);
-		schema = schemaFromObject(content);
-	}
+	let schema = chooseBestSchema(getResponseSchema(operationCurrentResponse), content);
 
 	let title = (operationCurrentResponse && operationCurrentResponse.description) || response.statusText;
-	let properties = schema.type === "array"? schema.items.properties: schema.properties;
+	let properties = (schema.type === "array"? schema.items.properties: schema.properties) || null;
 
-	let _handleGet = createGetHandler(openapi, operation, properties, response.url, handlers.get);
+	let handleGet = createGetHandler(openapi, operation, properties, response.url, handlers.get);
 	let deleteOperation = operation.endpoint.delete;
 	let updateOperation = operation.endpoint.put;
 </script>
@@ -63,10 +58,13 @@
 			<div on:click={() => handlers.close()}><XCircleFill width={22} height={22} /></div>
 		</div>
 	</div>
-	<hr>
 	{#if content}
 		{#if schema.type === "array"}
-			<ResultArray {properties} {content} handleGet={_handleGet} />
+			{#if schema.items.properties}
+				<ResultArrayOfObjects {properties} {content} {handleGet} />
+			{:else}
+				<ResultArrayOfValues schema={schema.items} {content} />
+			{/if}
 		{:else}
 			<ResultObject {properties} {content} />
 		{/if}
