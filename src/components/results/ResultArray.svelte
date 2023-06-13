@@ -1,16 +1,14 @@
 <script>
-	import OperationResultValue from './OperationResultValue.svelte';
+	import ItemValue from './ItemValue.svelte';
 	
 	export let properties;
 	export let content;
 	export let handleGet;
-	export let getUrl;
-	export let getOperation;
 </script>
 
 
 <div class="table-responsive">
-	<table class="col-12 table table-hover table-bordered" class:table-pointer={getOperation != null}>
+	<table class="col-12 table table-hover table-bordered" class:table-pointer={handleGet != null}>
 		<thead>
 			<tr>
 				{#each Object.entries(properties) as [key, property]}
@@ -20,9 +18,9 @@
 		</thead>
 		<tbody class="table-group-divider">
 			{#each content as item}
-				<tr on:click={() => getOperation && handleGet(getUrl, getOperation, item)}>
+				<tr on:click={() => handleGet(item)}>
 					{#each Object.keys(properties) as propertyKey}
-						<td><OperationResultValue property={properties[propertyKey]} value={item[propertyKey]} /></td>
+						<td><ItemValue property={properties[propertyKey]} value={item[propertyKey]} /></td>
 					{/each}
 				</tr>
 			{/each}

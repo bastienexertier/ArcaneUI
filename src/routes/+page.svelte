@@ -31,8 +31,8 @@
 		{/if}
 		<OperationTabs {openapi}/>
 	{/if}
-	{:catch error}
-		<p style="color: red">{error.message}</p>
+<!-- 	{:catch error}
+		<p style="color: red">{error.message}</p> -->
 	{/await}
 </div>
 

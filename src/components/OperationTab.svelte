@@ -12,9 +12,6 @@
 	let activeOperation = null;
 	let operationResult = null;
 
-	// console.log(operations);
-	// console.log(operations.map(o => o.operationId));
-
 	function handleClick(operation) {
 		showForm = true;
 		activeOperation = operation;
@@ -52,6 +49,12 @@
 		operationResult = callEndpoint(url, 'delete', {});
 		operationResult = null;
 	}
+
+	let resultHandlers = {
+		get: handleGet,
+		delete: handleDelete,
+		close: handleClose
+	};
 </script>
 
 <div class="row">
@@ -70,7 +73,7 @@
 
     	{#if operationResult}
 		{#await operationResult then {content, response}}
-			<OperationResult {openapi} operation={activeOperation} {content} {response} {handleGet} {handleClose} {handleDelete}/>
+			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers}/>
 		{/await}
 		{/if}
 	</div>

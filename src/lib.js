@@ -237,6 +237,8 @@ export function getInputType(property) {
 
 export function schemaFromObject(o) {
 
+	if (o === null) return null;
+
 	if (Array.isArray(o)) {
 		return schemaFromArray(o);
 	}
@@ -265,25 +267,46 @@ function schemaFromArray(arr) {
 	};
 }
 
-export function getResponseSchema(operationResponses, httpResponse) {
+export function getOperationCurrentResponse(operation, httpResponse) {
+	return operation.responses[httpResponse.status] || operation.responses['default'];
+}
 
-	let responseType = operationResponses[httpResponse.status] || operationResponses['default'];
+export function getResponseSchema(operationResponseType) {
 
-	if (!responseType || !responseType.content) {
+	if (!operationResponseType || !operationResponseType.content) {
 		return null;
 	}
 
-	if ('application/json' in responseType.content) {
-		return responseType.content['application/json'].schema;
+	if ('application/json' in operationResponseType.content) {
+		return operationResponseType.content['application/json'].schema;
 	}
 
-	for (let [contentType, contentSchema] of Object.entries(responseType.content)) {
+	for (let [contentType, contentSchema] of Object.entries(operationResponseType.content)) {
 		if (contentType.includes('json')) {
 			return contentSchema;
 		}
 	}
 
 	return null;
+}
+
+export function createGetHandler(openapi, operation, properties, currentUrl, handleGet) {
+
+	let getUrl = null;
+	let getOperation = null;
+
+	let operationPath = operation.path.replace(/\/$/, '');
+
+	for (let key of Object.keys(properties)) {
+		let endpoint = openapi.paths[operationPath + `/{${key}}`];
+		if (endpoint && endpoint.get) {
+			getOperation = endpoint.get;
+			getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
+			break;
+		}
+	}
+
+	return (getUrl && getOperation)? id => handleGet(getUrl, getOperation, id): null;
 }
 
 function createTag(tagName) {
@@ -389,6 +412,7 @@ function walkSchemas(openapi, visitors) {
 }
 
 function setRequired(schema) {
+	if ('required' in schema) { return; }
 	Object.entries(schema.properties).forEach(([key, property]) => {
 		if (property.required === undefined) {
 			property.required = schema.required && schema.required.includes(key);

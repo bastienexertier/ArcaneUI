@@ -85,6 +85,14 @@ def random_user(_:int):
 
 users = {user.name: user for user in map(random_user, range(200))}
 
+class PageFilter(BaseModel):
+	page_number:int = 0
+
+	def filter(self, _users:list[User]) -> list[User]:
+		size = 20
+		return _users[self.page_number*size:(self.page_number+1)*size]
+
+
 class GenderFilter(BaseModel):
 	gender:UserGender
 
@@ -104,18 +112,19 @@ class NameFilter(BaseModel):
 		return [user for user in _users if self.query in user.name]
 
 class Filters(BaseModel):
+	page_filter:PageFilter
 	gender_filter:GenderFilter|None
 	coolness_filter:CoolnessFilter|None
 	name_filter:NameFilter|None
 
 	def filter(self, _users:list[User]) -> list[User]:
-		for user_filter in [self.gender_filter, self.coolness_filter, self.name_filter]:
+		for user_filter in [self.gender_filter, self.coolness_filter, self.name_filter, self.page_filter]:
 			if user_filter:
 				_users = user_filter.filter(_users)
 		return _users
 
 
-@app.post('/users', response_model=list[UserOut], tags=['users'])
+@app.post('/users/', response_model=list[UserOut], tags=['users'])
 def get_users_multiple_filters(filters:Filters) -> list[UserOut]:
 	"""Returns every registered user"""
 	_users = list(users.values())
