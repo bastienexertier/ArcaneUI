@@ -12,7 +12,7 @@
 	}
 </script>
 
-<ul>
+<ul id="top">
 	{#each openapi.tags as tag}
 		<li class={activeTag.name === tag.name ? 'active' : ''}>
 			<a href=#{tag.name} on:click={() => handleClick(tag)}>{capitalizeFirstLetter(tag.name)} ({tag.operations.length})</a>

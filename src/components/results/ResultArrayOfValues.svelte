@@ -32,7 +32,4 @@
 	.table-hover > tbody > tr:hover > * {
 		color: lightgrey;
 	}
-	.table-pointer {
-		cursor: pointer
-	}
 </style>

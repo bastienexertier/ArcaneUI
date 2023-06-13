@@ -17,10 +17,15 @@
 	export let response;
 	export let handlers;
 
-	// onMount(() => window.scrollTo(0, 0));
 	onMount(() => {
-		let resultElement = document.getElementById('result');
-		resultElement && resultElement.scrollIntoView();
+		let elementToScrollTo;
+		let formElement = document.getElementById('form');
+		if (formElement) {
+			elementToScrollTo = document.getElementById('result');
+		} else {
+			elementToScrollTo = document.getElementById('top')
+		}
+		elementToScrollTo.scrollIntoView();
 	});
 
 	response = response || { // kinda hacky
@@ -44,18 +49,24 @@
 
 <div id="result" class="mt-3 p-2 box text-white border-{response.ok? 'success':'danger'}">
 	<div class="d-flex flex-row justify-content-between">
-		<h4>{title}</h4>
-		{#if schema && schema.description}<span>{schema.description}</span>{/if}
+		<div>
+			<h4>{title}</h4>
+			{#if schema && schema.description}<span>{schema.description}</span>{/if}
+		</div>
 		<div class="d-flex icons">
 			{#if response.ok}
 				{#if updateOperation && false}
-					<div on:click={() => handlers.delete(response.url, deleteOperation)}><PencilSquare width={22} height={22} /></div>
+					<button on:click|preventDefault={() => handlers.delete(response.url, deleteOperation)}>
+						<PencilSquare width={22} height={22} />
+					</button>
 				{/if}
 				{#if deleteOperation}
-					<div on:click={() => handlers.delete(response.url, deleteOperation)}><TrashFill width={22} height={22} /></div>
+					<button on:click|preventDefault={() => handlers.delete(response.url, deleteOperation)}>
+						<TrashFill width={22} height={22} />
+					</button>
 				{/if}
 			{/if}
-			<div on:click={() => handlers.close()}><XCircleFill width={22} height={22} /></div>
+			<button on:click|preventDefault={() => handlers.close()}><XCircleFill width={22} height={22} /></button>
 		</div>
 	</div>
 	{#if content}
@@ -76,7 +87,11 @@
 	#result {
 		border-top: 7px solid;
 	}
-	.icons div {
+	button {
+		width: 15%;
+	}
+	.icons button {
+		all: unset;
 		cursor: pointer;
 		margin-right: .5rem !important;
 		margin-left: .5rem !important;

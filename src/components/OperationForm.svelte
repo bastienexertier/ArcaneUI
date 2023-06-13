@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
 	import OperationFormBase from './forms/OperationFormBase.svelte';
@@ -12,13 +13,19 @@
 	let bodySchema = null;
 	let bodySchemaRequired = true
 
+	onMount(() => {
+		let resultElement = document.getElementById('top');
+		if (document.documentElement.scrollTop > resultElement.offsetTop)
+			resultElement.scrollIntoView();
+	});
+
 	if (operation.requestBody) {
 		bodySchema = operation.requestBody.content['application/json'].schema;
 		bodySchemaRequired = operation.requestBody.required || true;
 	}
 </script>
 
-<div class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
+<div id="form" class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
 	<div class="d-flex flex-row justify-content-between">
 		<div>
 			<h4>{operationName}</h4>
