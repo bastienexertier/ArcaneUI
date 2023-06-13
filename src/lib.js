@@ -1,5 +1,8 @@
 
 import OpenAPIParser from "@readme/openapi-parser";
+import showdown from "showdown";
+
+export const markdownConverter = new showdown.Converter();
 
 export async function loadOpenApiDocument(openapiDocumentUrl) {
 	//let openapiDocumentUrl = 'http://localhost:8000/openapi.json';
@@ -438,11 +441,11 @@ function fixSchemas(openapi) {
 }
 
 export function decorateOpenApi(documentUrl, openapi) {
-	console.log(openapi);
-		addServer(documentUrl, openapi);
-		linkOperationToTags(openapi);
-		fillSchema(openapi);
-		fixSchemas(openapi);
+	addServer(documentUrl, openapi);
+	linkOperationToTags(openapi);
+	fillSchema(openapi);
+	fixSchemas(openapi);
+
 	console.log(openapi);
 
 	return openapi;

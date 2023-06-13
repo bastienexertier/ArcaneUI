@@ -1,15 +1,11 @@
 <script>
-	import showdown from "showdown";
-	
 	import { onMount } from 'svelte'
-	import { loadOpenApiDocument } from "../lib.js";
+	import { loadOpenApiDocument, markdownConverter } from "../lib.js";
 
 	import OperationTabs from '../components/OperationTabs.svelte';
 
-
-	let converter = new showdown.Converter();
-
 	let promise = Promise.resolve(null);
+
 	onMount(async () => {
 		const urlParams = new URLSearchParams(window.location.search);
 		const openapiDocumentUrl = urlParams.get('openapi');
@@ -27,7 +23,7 @@
 	    <span style="font-size: 1.25rem">{openapi.info.version}</span>
 		{#if openapi.info.description}
 	    	<hr>
-			{@html converter.makeHtml(openapi.info.description)}
+			{@html markdownConverter.makeHtml(openapi.info.description)}
 		{/if}
 		<OperationTabs {openapi}/>
 	{/if}
