@@ -76,8 +76,10 @@
 			{:else}
 				<ResultArrayOfValues schema={schema.items} {content} />
 			{/if}
-		{:else}
+		{:else if schema.type === "object"}
 			<ResultObject {properties} {content} />
+		{:else}
+			{content}
 		{/if}
 	{/if}
 </div>
