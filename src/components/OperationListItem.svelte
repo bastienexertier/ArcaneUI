@@ -19,10 +19,6 @@
 		{#if operation.deprecated}
 			<span class="card-text deprecated">Do not use!</span>
 		{/if}
-		{#if operation.description}
-			<hr>
-			<div class="card-text description">{operation.description}</div>
-		{/if}
 	</div>
 </div>
 

@@ -5,6 +5,8 @@
 	import OperationFormBase from './forms/OperationFormBase.svelte';
 	import OperationFormInput from './forms/OperationFormInput.svelte';
 
+	import { markdownConverter } from "../lib.js";
+
 	export let operation;
 	export let handleSubmit;
 	export let handleFormClose;
@@ -25,11 +27,10 @@
 	}
 </script>
 
-<div id="form" class="mt-3 p-2 box text-white"><!--  sticky-top"> -->
+<div id="form" class="mt-3 p-2 box text-white">
 	<div class="d-flex flex-row justify-content-between">
 		<div>
 			<h4>{operationName}</h4>
-			{#if operation.description}<span>{operation.description}</span>{/if}
 		</div>
 		<div class="d-flex icons">
 			<button on:click|preventDefault={() => handleFormClose()}>
@@ -37,6 +38,12 @@
 			</button>
 		</div>
 	</div>
+	{#if operation.description}
+		<hr>
+		<div class="markdown">
+			{@html markdownConverter.makeHtml(operation.description)}
+		</div>
+	{/if}
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
 		<div class="row">
