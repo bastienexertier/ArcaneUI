@@ -19,9 +19,13 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 export function unflattenFormData(data) {
 	let content = {};
 	for (let [key, value] of data) {
-		_unflatten(content, key.split('.'), 1, value);
+		if (key[0] === '.') {
+			_unflatten(content, key.split('.'), 1, value);
+		} else {
+			content[key] = value;
+		}
 	}
-	return content[''];
+	return content;
 }
 
 const isInteger = s => /^\d+$/.test(s);
@@ -129,7 +133,7 @@ function removeNullFromArrayInPlace(array) {
 
 export async function callOperation(baseUrl, openapi, path, operation, content) {
 
-	let _url = `${baseUrl}${path}`;
+	let url = `${baseUrl}${path}`;
 	let _queryParams = new URLSearchParams();
 
 	//console.log('callOperation', operation, content);
@@ -138,7 +142,7 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 		for (let param of operation.parameters) {
 			//console.log(param);
 			if (param.in == "path") {
-				_url = _url.replace(`{${param.name}}`, content[param.name]);
+				url = url.replace(`{${param.name}}`, content[param.name]);
 			} else if (param.in == "query") {
 				let value = content[param.name];
 				if (value) {
@@ -151,14 +155,14 @@ export async function callOperation(baseUrl, openapi, path, operation, content) 
 		}
 	}
 
-	_url = `${_url}${_queryParams.size?'?':''}${_queryParams}`;
+	url = `${url}${_queryParams.size?'?':''}${_queryParams}`;
 
 	let body = null;
 	if (operation.requestBody) {
-		body = fixFormData(content, operation.requestBody.content['application/json'].schema, operation.requestBody.required);
+		body = fixFormData(content['body'], operation.requestBody.content['application/json'].schema, operation.requestBody.required);
 	}
 
-	return await callEndpoint(_url, operation.method.toLowerCase(), body);
+	return await callEndpoint(url, operation.method.toLowerCase(), body);
 }
 
 export async function callEndpoint(url, method, body) {

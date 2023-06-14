@@ -21,7 +21,7 @@
 
 	if (operation.requestBody) {
 		bodySchema = operation.requestBody.content['application/json'].schema;
-		bodySchemaRequired = operation.requestBody.required || true;
+		bodySchemaRequired = operation.requestBody.required || false; // absent means non required
 	}
 </script>
 
@@ -42,14 +42,14 @@
 		<div class="row">
 			{#each operation.parameters as parameter}
 				<div class="col-3">
-					<OperationFormInput id={operation.operationId} name={'.'+parameter.name} schema={parameter.schema || parameter} required={parameter.required}/>
+					<OperationFormInput id={operation.operationId} name={parameter.name} schema={parameter.schema || parameter} required={parameter.required}/>
 				</div>
 			{/each}
 		</div>
 
 		<div>
 			{#if bodySchema}
-				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} currentId={""} />
+				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} currentId={"body"} />
 			{/if}
 		</div>
 
