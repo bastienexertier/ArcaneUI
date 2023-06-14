@@ -19,7 +19,7 @@ export async function loadOpenApiDocument(openapiDocumentUrl) {
 export function unflattenFormData(data) {
 	let content = {};
 	for (let [key, value] of data) {
-		if (key[0] === '.') {
+		if (key.startsWith('body.')) {
 			_unflatten(content, key.split('.'), 1, value);
 		} else {
 			content[key] = value;
