@@ -1,12 +1,11 @@
 <script>
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
-	export let itemId = null;
 	export let handleDelete = null;
 </script>
 
 {#if handleDelete !== null}
-	<button class="btn-delete" on:click|preventDefault={() => handleDelete(itemId)}>
+	<button class="btn-delete" on:click|preventDefault={handleDelete}>
 		<XCircleFill width={22} height={22} />
 	</button>
 {/if}
@@ -15,9 +14,7 @@
 	.btn-delete {
 		all: unset;
 		cursor: pointer;
-		height: 0px;
+		margin-left: auto;
 		float: right;
-		margin: auto;
-		display: block;
 	}
 </style>

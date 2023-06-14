@@ -3,6 +3,7 @@
 
 	import Header from './headers/Header.svelte'
 	import OperationFormBase from './OperationFormBase.svelte';
+	import OperationFormObject from './OperationFormObject.svelte';
 	import AddButton from './buttons/AddButton.svelte';
 
 	export let operationId;
@@ -19,9 +20,11 @@
 </script>
 
 {#if enabled}
-	<OperationFormBase {operationId} {schema} {currentId} required={true} {title} {description} {handleDelete} />
+	<!-- <OperationFormBase {operationId} {schema} {currentId} required={true} {title} {description} {handleDelete} /> -->
+	<OperationFormObject {operationId} {schema} {currentId} {title} {description} {handleDelete} />
 	<input type="hidden" value="true" name={currentId + '.'}/>
 {:else}
-	<Header {title} {description} {schema} />
-	<AddButton {handleAdd} />
+	<Header {title} {description} {schema} {handleAdd} />
+	<hr>
 {/if}
+

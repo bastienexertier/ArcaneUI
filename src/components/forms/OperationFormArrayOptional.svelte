@@ -15,12 +15,14 @@
 	let enabled = false;
 
 	const handleAdd = () => enabled = true;
+	console.log('optional array')
 </script>
 
-<Header {title} {description} {schema} />
 
 {#if enabled}
 	<OperationFormArray {operationId} {schema} {currentId} />
 {:else}
+	<Header {title} {description} {schema} />
+	<hr>
 	<AddButton {handleAdd} />
 {/if}

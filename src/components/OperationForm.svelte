@@ -4,6 +4,7 @@
 
 	import OperationFormBase from './forms/OperationFormBase.svelte';
 	import OperationFormInput from './forms/OperationFormInput.svelte';
+	import InputSelector from './forms/inputs/InputSelector.svelte';
 
 	import { markdownConverter } from "../lib.js";
 
@@ -46,19 +47,28 @@
 	{/if}
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
-		<div class="row">
-			{#each operation.parameters as parameter}
-				<div class="col-3">
-					<OperationFormInput id={operation.operationId} name={parameter.name} schema={parameter.schema || parameter} required={parameter.required}/>
+		{#if operation.parameters && operation.parameters.length > 0}
+			<div class="row">
+				<div class="col-9 offset-1">
+					<table class="table table-borderless">
+						<tbody>
+							{#each operation.parameters as parameter, index}
+								<tr>
+									<td><label for={index}>{parameter.schema.title}</label></td>
+									<td><InputSelector inputId={index} schema={parameter.schema} name={parameter.name} required={parameter.required} /></td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
 				</div>
-			{/each}
-		</div>
+			</div>
+		{/if}
 
-		<div>
-			{#if bodySchema}
+		{#if bodySchema}
+			<div>
 				<OperationFormBase schema={bodySchema} operationId={operation.operationId} required={bodySchemaRequired} currentId={"body"} />
-			{/if}
-		</div>
+			</div>
+		{/if}
 
 		<div class="button-wrapper">
 			<button type="submit" class="btn btn-outline-light">Ok</button>
@@ -74,6 +84,7 @@
 		display: flex;
 		justify-content: space-around;
 		margin-top: 15px;
+		margin-bottom: 15px;
 	}
 	button {
 		width: 15%;
@@ -84,5 +95,28 @@
 		margin-right: .5rem !important;
 		margin-left: .5rem !important;
 	}
+	form {
+		margin-top: 15px;
+	}
+	table {
+		color: white;
+		border-color: dimgrey;
+		margin-bottom: 0px;
+	}
+	td:nth-child(1) {
+		font-weight: 100;
+		font-style: italic;
+		text-align: right;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+	td:nth-child(2) {
+		width: 100%;
+		font-weight: bold;
+	}
+/*	.markdown {
+		background-color: black;
+		padding: 10px;
+	}*/
 </style>
 

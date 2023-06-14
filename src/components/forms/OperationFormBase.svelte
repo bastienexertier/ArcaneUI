@@ -27,21 +27,21 @@
 </script>
 
 {#if isNested}
-	<DeleteButton {itemId} {handleDelete} />
+	<!-- <DeleteButton {itemId} {handleDelete} /> -->
 	{#if "allOf" in schema}
 		{#each schema.allOf as subSchema}
 			<svelte:self {operationId} schema={subSchema} {currentId} {required} title={schema.title} description={schema.description} />
 		{/each}
 	{:else if schema.type === "array"}
 		{#if required}
-			<Header {title} {description} {schema} />
 			<OperationFormArray {operationId} {schema} {currentId} />
 		{:else}
-			<OperationFormArrayOptional {operationId} {schema} {currentId} {title} {description} />
+			<OperationFormArray {operationId} {schema} {currentId} />
+			<!-- <OperationFormArrayOptional {operationId} {schema} {currentId} {title} {description} /> -->
 		{/if}
 	{:else if schema.type === "object"}
 		{#if required}
-			<OperationFormObject {operationId} {schema} {currentId} {title} {description} />
+			<OperationFormObject {operationId} {schema} {currentId} {title} {description} {handleDelete} />
 		{:else}
 			<OperationFormObjectOptional {operationId} {schema} {currentId} {title} {description} />
 		{/if}
@@ -50,8 +50,6 @@
 		<OperationFormAnyOf {operationId} schemas={schema.anyOf} {currentId} />
 	{/if}
 {:else}
-	<div>
-		<OperationFormInput id={operationId} name={currentId} {schema} {required} />
-	</div>
+	<OperationFormInput id={operationId} name={currentId} {schema} {required} />
 {/if}
 

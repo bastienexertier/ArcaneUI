@@ -14,5 +14,7 @@
 	.btn-add {
 		all: unset;
 		cursor: pointer;
+		margin: auto;
+		display: block;
 	}
 </style>
