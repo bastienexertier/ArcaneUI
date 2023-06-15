@@ -204,14 +204,12 @@ export async function callEndpoint(url, method, body) {
 
 	//console.log(response);
 
-	let data;
+	let data = null;
 	try {
 		data = await response.json();
-	} catch (error) {
-		data = {};
-	}
+	} catch (error) { }
 	//console.log(data);
-	return {response: response, content: data || {}};
+	return {response: response, content: data};
 }
 
 export function capitalizeFirstLetter(string) {

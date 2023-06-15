@@ -5,6 +5,7 @@
 	import TrashFill from "svelte-bootstrap-icons/lib/TrashFill.svelte";
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
+	import ResultEmpty from './results/ResultEmpty.svelte';
 	import ResultObject from './results/ResultObject.svelte';
 	import ResultArrayOfObjects from './results/ResultArrayOfObjects.svelte';
 	import ResultArrayOfValues from './results/ResultArrayOfValues.svelte';
@@ -69,7 +70,9 @@
 			<button on:click|preventDefault={() => handlers.close()}><XCircleFill width={22} height={22} /></button>
 		</div>
 	</div>
-	{#if content}
+	{#if content === null}
+		<ResultEmpty />
+	{:else}
 		{#if schema.type === "array"}
 			{#if schema.items.properties}
 				<ResultArrayOfObjects {properties} {content} {handleGet} />
