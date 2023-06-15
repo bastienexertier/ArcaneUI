@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
+	import OperationDescription from './OperationDescription.svelte';
 	import ParametersForm from './forms/ParametersForm.svelte';
 	import OperationFormBase from './forms/OperationFormBase.svelte';
 	import OperationFormInput from './forms/OperationFormInput.svelte';
 	import InputSelector from './forms/inputs/InputSelector.svelte';
-
-	import { markdownConverter } from "../lib.js";
 
 	export let operation;
 	export let handleSubmit;
@@ -41,10 +40,7 @@
 		</div>
 	</div>
 	{#if operation.description}
-		<hr>
-		<div class="markdown">
-			{@html markdownConverter.makeHtml(operation.description)}
-		</div>
+		<OperationDescription description={operation.description} />
 	{/if}
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
@@ -86,9 +82,5 @@
 	form {
 		margin-top: 15px;
 	}
-/*	.markdown {
-		background-color: black;
-		padding: 10px;
-	}*/
 </style>
 
