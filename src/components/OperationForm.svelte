@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import XCircleFill from "svelte-bootstrap-icons/lib/XCircleFill.svelte";
 
+	import ParametersForm from './forms/ParametersForm.svelte';
 	import OperationFormBase from './forms/OperationFormBase.svelte';
 	import OperationFormInput from './forms/OperationFormInput.svelte';
 	import InputSelector from './forms/inputs/InputSelector.svelte';
@@ -48,20 +49,7 @@
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
 		{#if operation.parameters && operation.parameters.length > 0}
-			<div class="row">
-				<div class="col-9 offset-1">
-					<table class="table table-borderless">
-						<tbody>
-							{#each operation.parameters as parameter, index}
-								<tr>
-									<td><label for={index}>{parameter.schema.title}</label></td>
-									<td><InputSelector inputId={index} schema={parameter.schema} name={parameter.name} required={parameter.required} /></td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</div>
+			<ParametersForm parameters={operation.parameters} />
 		{/if}
 
 		{#if bodySchema}
@@ -97,22 +85,6 @@
 	}
 	form {
 		margin-top: 15px;
-	}
-	table {
-		color: white;
-		border-color: dimgrey;
-		margin-bottom: 0px;
-	}
-	td:nth-child(1) {
-		font-weight: 100;
-		font-style: italic;
-		text-align: right;
-		vertical-align: middle;
-		white-space: nowrap;
-	}
-	td:nth-child(2) {
-		width: 100%;
-		font-weight: bold;
 	}
 /*	.markdown {
 		background-color: black;

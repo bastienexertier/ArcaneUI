@@ -28,6 +28,7 @@
 		font-style: italic;
 		text-align: right;
 		white-space: nowrap;
+		min-width: 20%;
 	}
 	td:nth-child(2) {
 		width: 100%;
