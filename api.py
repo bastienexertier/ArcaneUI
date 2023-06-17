@@ -5,7 +5,7 @@ from typing import Annotated, Union
 
 from fastapi import FastAPI, HTTPException, Response, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from starlette import status
 
 from rich import print
@@ -17,6 +17,7 @@ app = FastAPI(
 
 origins = [
 	'http://localhost:5173',
+	'http://localhost:4173',
 ]
 
 app.add_middleware(
@@ -26,6 +27,10 @@ app.add_middleware(
 	allow_methods=['*'],
 	allow_headers=['*'],
 )
+
+@app.get('/print')
+def _print(value:str='Hello, world!') -> str:
+	return value
 
 class UserGender(enum.Enum):
 	"""The gender of the user"""
@@ -112,6 +117,9 @@ class NameFilter(BaseModel):
 		return [user for user in _users if self.query in user.name]
 
 class Filters(BaseModel):
+	"""
+	Filter are really cool!
+	"""
 	page_filter:PageFilter
 	gender_filter:GenderFilter|None
 	coolness_filter:CoolnessFilter|None
@@ -174,6 +182,12 @@ def get_user(name:str, favorite_color:str|None='Red') -> User:
 		return users[name]
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
+@app.get('/users/{name}/mom', response_model=Address|None, tags=['users'])
+def get_user_moms_address(name:str) -> Address|None:
+	if name in users:
+		return users[name].mom_address
+	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
+
 # @app.post('/users', response_model=User, tags=['users'])
 # def post_user(user:User) -> User:
 # 	"""Adds a new user"""
@@ -219,20 +233,19 @@ def purge_users():
 
 
 class TaskStatus(enum.Enum):
-	""""""
+	"""The status of the task"""
 	DEFAULT = "DEFAULT"
 	TODO = "TODO"
 	IN_PROGRESS = "IN_PROGRESS"
 	DONE = "DONE"
 
 class Task(BaseModel):
-	id:int
 	user_id:int
 	text:str
 	status:TaskStatus = TaskStatus.TODO
 
-@app.get(
-	'/users/{user_id}/tasks/{task_id}',
+@app.post(
+	'/users/{user_id_for_the_task}/tasks/{task_id}',
 	tags=['tasks'],
 	response_model=Task,
 	responses={
@@ -245,22 +258,32 @@ class Task(BaseModel):
 		}
 	},
 )
-def get_task(user_id:int, task_id:int, page:int=0, done:bool=False) -> Task:
+def post_task(user_id_for_the_task:int, task_id:int, task:Task) -> Task:
 	"""
-	Loads a task.
-	You need to provide the id of the task.
-	You can also provide a page number that does nothing.
+	# Get Task
+	This menu is really well documented.  
+	With this menu you can:
+	- Make coffee
+	- Kill dragons
+	- And many more!
+
+	**TODO**
+
+	```python
+	print("Hello, world!")
+	```
+
 	"""
 
-	if task_id == 404:
+	if user_id_for_the_task == 404:
 		raise HTTPException(status_code=404)
 
-	return Task(id=task_id, user_id=1, text='Kill Bastien')
+	return task
 
 
 @app.post('/users/{user_id}/tasks', tags=['tasks'])
-def add_task(user_id:int, task_status:TaskStatus, text:str='Do something'):
-	return Task(id=0, user_id=user_id, text=text)
+def add_task(user_id:int, task_status:TaskStatus, text:str='Do something') -> Task:
+	return Task(user_id=user_id, text=text, status=task_status)
 
 
 @app.post('/tasks', tags=['tasks'])
@@ -282,6 +305,10 @@ def does_beep_boop(o:BeepBoop) -> BeepBoop:
 
 from datetime import datetime, date
 
+
+
+
+
 class EmailConfidentiality(enum.Enum):
 	"""Conidentiality level of the Email (C1 is most confidential)"""
 	C1 = 'C1'
@@ -289,20 +316,25 @@ class EmailConfidentiality(enum.Enum):
 	C3 = 'C3'
 
 class EmailRequest(BaseModel):
-	recipient:str
+	recipient:EmailStr
 	subject:str
 	date:date
 	important:bool
 	confidentiality:EmailConfidentiality
 
 @app.post('/email', tags=['email'])
-def send_email(email:EmailRequest):
-	return {'status': 'ok'}
+def send_email(email:EmailRequest) -> EmailRequest:
+	return email
+
+
+
+
+
 
 
 import json
-@app.get('/file/{filename}')
-def get_file(filename:str):
+@app.get('/file')
+def get_file(filename:Annotated[str, Query(max_length=50)]):
 	with open('C:\\Users\\Bastien\\Downloads\\' + filename, 'r') as file:
 		return json.load(file)
 
@@ -405,12 +437,20 @@ def get_instrument(id:int|bool):
 def add_traders(traders:list[User]):
 	return traders
 
-@app.get('/maths/add', tags=['maths'])
-def add(numbers:Annotated[list[int], Query()]) -> int:
-	return sum(numbers)
+@app.get('/parameters/array', tags=['parameters'])
+def array(numbers:Annotated[list[int], Query()]):
+	return {"result": sum(numbers)}
 
-@app.get('/maths/range', tags=['maths'])
-def get_range(up_to:int) -> list[int]:
+@app.get('/parameters/incorrect_return_value', tags=['parameters'])
+def incorrect_return_value(numbers:Annotated[list[int], Query()]) -> int:
+	return {"result": sum(numbers)}
+
+@app.get('/parameters/union', tags=['parameters'])
+def union(number:Annotated[int|bool, Query()]):
+	return number
+
+@app.get('/parameters/returns_array', tags=['parameters'])
+def returns_array(up_to:int) -> list[int]:
 	return list(range(up_to))
 
 # class Division(BaseModel):
