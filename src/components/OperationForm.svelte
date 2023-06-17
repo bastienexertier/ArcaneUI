@@ -30,9 +30,7 @@
 
 <div id="form" class="mt-3 p-2 box text-white">
 	<div class="d-flex flex-row justify-content-between">
-		<div>
-			<h4>{operationName}</h4>
-		</div>
+		<h4>{operationName}</h4>
 		<div class="d-flex icons">
 			<button on:click|preventDefault={() => handleFormClose()}>
 				<XCircleFill width={22} height={22} />
