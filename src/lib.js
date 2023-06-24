@@ -241,8 +241,9 @@ export function getInputType(property) {
 }
 
 export function chooseBestSchema(schemaFromResponses, responseContent) {
-	if (schemaFromResponses !== null && Object.keys(schemaFromResponses).length !== 0) return schemaFromResponses;
-	return schemaFromObject(responseContent);
+	if (schemaFromResponses !== null && Object.keys(schemaFromResponses).length !== 0)
+		return schemaFromResponses;
+	return schemaFromObject(responseContent) || {};
 }
 
 function schemaFromObject(o) {
