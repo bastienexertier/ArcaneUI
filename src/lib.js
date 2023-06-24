@@ -302,25 +302,20 @@ export function getResponseSchema(operationResponseType) {
 	return null;
 }
 
-export function createGetHandler(openapi, operation, properties, currentUrl, handleGet) {
-
-	let getUrl = null;
-	let getOperation = null;
+export function createGetHandler(operation, properties, currentUrl, handleGet) {
 
 	if (properties === null) return;
 
 	let operationPath = operation.path.replace(/\/$/, '');
 
 	for (let key of Object.keys(properties)) {
-		let endpoint = openapi.paths[operationPath + `/{${key}}`];
-		if (endpoint && endpoint.get) {
-			getOperation = endpoint.get;
-			getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
-			break;
+		let childOperation = operation.endpoint.children.find(o => o.path === operationPath + `/{${key}}`);
+		if (childOperation && childOperation.method === "get") {
+			return content => handleGet(childOperation, currentUrl, key, content, true);
 		}
 	}
 
-	return (getUrl && getOperation)? id => handleGet(getUrl, getOperation, id): null;
+	return null;
 }
 
 function createTag(tagName) {
@@ -442,9 +437,45 @@ function fixSchemas(openapi) {
 	]);
 }
 
+function arrayStartsWith(prefixArray, array) {
+	if (array.length < prefixArray.length) return false;
+
+	for (let i = 0; i < prefixArray.length; i++) {
+		if (array[i] !== prefixArray[i]) return false;
+	}
+	return true;
+}
+
+function linkChildOperations(openapi) {
+
+	let _pathes = Object.entries(openapi.paths);
+	let endpoints = _pathes.map(([k, v]) => v);
+	let pathesAsArrays = _pathes.map(([k, v]) => k).map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
+
+	endpoints.forEach((endpoint) => endpoint.children = []);
+
+	for (let i = 0; i < pathesAsArrays.length; i++) {
+		let path1 = pathesAsArrays[i];
+
+		for (let j = 0; j < pathesAsArrays.length; j++) {
+			let path2 = pathesAsArrays[j];
+
+			if (i === j) continue;
+			if (!arrayStartsWith(path1, path2)) continue;
+
+			for (let method of openapiHttpMethods) {
+				if (method in endpoints[j]) {
+					endpoints[i].children.push(endpoints[j][method]);
+				}
+			}
+		}
+	}
+}
+
 export function decorateOpenApi(documentUrl, openapi) {
 	addServer(documentUrl, openapi);
 	linkOperationToTags(openapi);
+	linkChildOperations(openapi);
 	fillSchema(openapi);
 	fixSchemas(openapi);
 

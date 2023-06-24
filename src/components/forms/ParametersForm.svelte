@@ -2,6 +2,7 @@
 	import ParametersFormRow from './ParametersFormRow.svelte';
 
 	export let parameters;
+	export let parameterValues;
 </script>
 
 <div class="row">
@@ -9,7 +10,11 @@
 		<table class="table table-borderless">
 			<tbody>
 				{#each parameters as parameter, index}
-					<ParametersFormRow id={index} {parameter} />
+					{#if parameterValues && parameter.name in parameterValues}
+						<ParametersFormRow id={index} {parameter} defaultValue={parameterValues[parameter.name]}/>
+					{:else}
+						<ParametersFormRow id={index} {parameter} />
+					{/if}
 				{/each}
 			</tbody>
 		</table>
