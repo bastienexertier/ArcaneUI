@@ -47,6 +47,10 @@ class Address(BaseModel):
 	street_number:int
 	country:Country
 
+	@classmethod
+	def create_random(cls):
+		return cls(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK)))
+
 class Test(BaseModel):
 	address:Address
 
@@ -74,21 +78,20 @@ class UserOut(BaseModel):
 class UserDeleteResponse(BaseModel):
 	name:str
 
-names = ['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto']
 
-def random_user(_:int):
-	name = choice(names)
+def random_user():
 	return User(
-		name=f"{name}_{randint(0, 1000)}",
+		name=f"{choice(['Bastien', 'Eloise', 'Fanny', 'Quentin', 'Yasuto'])}_{randint(0, 1000)}",
 		age=randint(20, 80),
 		gender=choice((UserGender.MALE, UserGender.FEMALE)),
 		is_cool=choice((True, False)),
 		favorite_color=choice(('Red', 'Blue', 'Green')),
-		user_address=Address(street_number=randint(100, 999), country=choice((Country.FRANCE, Country.JAPAN, Country.IRAK))),
+		user_address=Address.create_random(),
+		mom_address=Address.create_random(),
 		siblings_adresses=[]
 	)
 
-users = {user.name: user for user in map(random_user, range(200))}
+users = {user.name: user for user in [random_user() for _ in range(200)]}
 
 class PageFilter(BaseModel):
 	page_number:int = 0
@@ -145,13 +148,13 @@ def get_users_one_filter(user_filter:GenderFilter|CoolnessFilter|NameFilter) -> 
 	"""Returns every registered user"""
 	return [UserOut(**u.dict()) for u in user_filter.filter(list(users.values()))]
 
-@app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
-def get_users_zero_or_one_filter(user_filter:GenderFilter|None, coolness_filter:CoolnessFilter|None=None, name_filter:NameFilter|None=None) -> list[UserOut]:
-	"""Returns every registered user"""
-	_users = list(users.values())
-	if user_filter:
-		_users = user_filter.filter(_users)
-	return [UserOut(**u.dict()) for u in _users]
+# @app.post('/users/filter/2', response_model=list[UserOut], tags=['users'])
+# def get_users_zero_or_one_filter(user_filter:GenderFilter|None, coolness_filter:CoolnessFilter|None=None, name_filter:NameFilter|None=None) -> list[UserOut]:
+# 	"""Returns every registered user"""
+# 	_users = list(users.values())
+# 	if user_filter:
+# 		_users = user_filter.filter(_users)
+# 	return [UserOut(**u.dict()) for u in _users]
 
 @app.post('/users/filter/3', response_model=list[UserOut], tags=['users'])
 def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|NameFilter]) -> list[UserOut]:
@@ -161,36 +164,40 @@ def get_users_infinite_filters(user_filters:list[GenderFilter|CoolnessFilter|Nam
 		_users = user_filter.filter(_users)
 	return [UserOut(**u.dict()) for u in _users]
 
-@app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
-def get_users_by_gender(gender:UserGender=UserGender.FEMALE) -> list[User]:
-	"""Returns every registered user of the selected gender"""
-	return [user for user in users.values() if user.gender == gender]
+# @app.get('/users/gender/{gender}', response_model=list[User], tags=['users'])
+# def get_users_by_gender(gender:UserGender=UserGender.FEMALE) -> list[User]:
+# 	"""Returns every registered user of the selected gender"""
+# 	return [user for user in users.values() if user.gender == gender]
 
-@app.get('/users/coolness', response_model=list[UserOut], tags=['users'])
-def get_users_by_coolness(is_cool:bool) -> list[UserOut]:
-	"""Returns every registered user that has the selected coolness"""
-	return [UserOut(**user.dict()) for user in users.values() if user.is_cool == is_cool]
+# @app.get('/users/coolness', response_model=list[UserOut], tags=['users'])
+# def get_users_by_coolness(is_cool:bool) -> list[UserOut]:
+# 	"""Returns every registered user that has the selected coolness"""
+# 	return [UserOut(**user.dict()) for user in users.values() if user.is_cool == is_cool]
 
-@app.get('/users/query', response_model=list[UserOut], tags=['users'])
-def get_users_by_name_query(query:str|None='') -> list[UserOut]:
-	"""Returns every registered user that has the given query in their name"""
-	return [UserOut(**user.dict()) for user in users.values() if query in user.name]
+# @app.get('/users/query', response_model=list[UserOut], tags=['users'])
+# def get_users_by_name_query(query:str|None='') -> list[UserOut]:
+# 	"""Returns every registered user that has the given query in their name"""
+# 	return [UserOut(**user.dict()) for user in users.values() if query in user.name]
 
 @app.get('/users/{name}', response_model=User, tags=['users'])
+@app.get('/users/{name}/info', response_model=User, tags=['users'], summary='User info')
 def get_user(name:str) -> User:
 	if name in users:
 		return users[name]
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
-@app.get('/users/{name}/mom', response_model=Address|None, tags=['users'])
+@app.get('/users/{name}/info/mom', response_model=Address|None, tags=['_users'])
 def moms_address(name:str) -> Address|None:
+	"""Returns the address of the user's mom"""
 	if name in users:
 		return users[name].mom_address
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
-@app.get('/users/{name}/food', tags=['users'])
+
+@app.get('/users/{name}/info/food', tags=['_users'])
 def favorite_food(name:str) -> str:
 	return f'{name} likes Burgers.'
-@app.post('/users/{name}/money', tags=['users'])
+
+@app.post('/users/{name}/money', tags=['_users'])
 def give_money(name:str, amount:int) -> str:
 	return f'You gave {amount}€ to {name}'
 
@@ -255,6 +262,18 @@ class TaskOut(BaseModel):
 	text:str
 	status:TaskStatus = TaskStatus.TODO
 
+
+@app.get('/users/{name}/tasks')
+def get_tasks(name:str) -> list[TaskOut]:
+	return [
+		TaskOut(task_id=1, name=name, text='Kill me', status=TaskStatus.DONE),
+		TaskOut(task_id=2, name=name, text='Do stuff', status=TaskStatus.IN_PROGRESS)
+	]
+
+@app.get('/users/{name}/tasks/{task_id}')
+def get_task(name:str, task_id:int) -> TaskOut:
+	return TaskOut(task_id=task_id, name=name, text='Do stuff', status=TaskStatus.IN_PROGRESS)
+
 @app.post(
 	'/users/{name}/tasks',
 	tags=['tasks'],
@@ -269,7 +288,7 @@ class TaskOut(BaseModel):
 		}
 	},
 )
-def post_task(name:str, task:TaskIn) -> TaskOut:
+def add_task(name:str, task:TaskIn) -> TaskOut:
 	"""
 	# Get Task
 	This menu is really well documented.  
@@ -291,6 +310,10 @@ def post_task(name:str, task:TaskIn) -> TaskOut:
 def delete_task(name:str, task_id:int) -> str:
 	return f'Deleted task {task_id} of user {name}'
 
+@app.put('/users/{name}/tasks/{task_id}/complete')
+def complete_task(name:str, task_id:int) -> TaskOut:
+	return TaskOut(task_id=task_id, name=name, text='Do stuff', status=TaskStatus.DONE)
+
 # @app.post('/users/{user_id}/tasks', tags=['tasks'])
 # def add_task(user_id:int, task_status:TaskStatus, text:str='Do something') -> Task:
 # 	return Task(user_id=user_id, text=text, status=task_status)
@@ -301,16 +324,17 @@ def delete_task(name:str, task_id:int) -> str:
 # 	return tasks
 
 class BeepBoop(BaseModel):
-	toggle_1:bool = False
-	toggle_2:bool = False
-	toggle_3:bool = True
-	toggle_4:bool = False
-	toggle_5:bool = True
-	toggle_6:bool = False
-	toggle_7:bool = False
+	beep_boop_1:bool = False
+	beep_boop_2:bool = False
+	beep_boop_3:bool = True
+	beep_boop_4:bool = False
+	beep_boop_5:bool = True
+	beep_boop_6:bool = False
+	beep_boop_7:bool = False
 
 @app.post('/thing', tags=['tasks'])
 def does_beep_boop(o:BeepBoop) -> BeepBoop:
+	"""This makes the computer goes 'beepboop'"""
 	return o
 
 from datetime import datetime, date

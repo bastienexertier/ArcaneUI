@@ -312,7 +312,7 @@ export function createGetHandler(operation, properties, currentUrl, handleGet) {
 	for (let key of Object.keys(properties)) {
 		let childOperation = operation.endpoint.children.find(o => o.path === operationPath + `/{${key}}`);
 		if (childOperation && childOperation.method === "get") {
-			return content => handleGet(childOperation, currentUrl, key, content, true);
+			return content => handleGet(childOperation, content);
 		}
 	}
 

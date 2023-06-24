@@ -14,22 +14,14 @@
 	let operationResult = null;
 	let parameterValues = null;
 
-	function handleClick(operation, content) {
-		showForm = true;
+	function handleOperationSelect(operation, content) {
 		activeOperation = operation;
-		operationResult = null;
 		parameterValues = content;
-	}
 
-	function handleGet(getOperation, currentUrl, key, content, autoSubmit) {
+		let autoSubmit = !operation.requestBody && operation.parameters.every(p => p.name in content);
 		showForm = !autoSubmit;
-		activeOperation = getOperation;
-		parameterValues = {};
-		parameterValues[key] = content[key];
-
 		if (autoSubmit) {
-			let getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
-			operationResult = callOperation(openapi.server, openapi, getUrl, getOperation, content);
+			operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, parameterValues);
 		} else {
 			operationResult = null;
 		}
@@ -65,7 +57,7 @@
 	}
 
 	let resultHandlers = {
-		get: handleGet,
+		get: handleOperationSelect,
 		delete: handleDelete,
 		close: handleClose
 	};
@@ -74,7 +66,7 @@
 <div class="row">
 	<div class="col-3 mb-5">
 		{#each operations as operation (operation.operationId)}
-			<OperationListItem {operation} {handleClick} isActive={operation == activeOperation} />
+			<OperationListItem {operation} {handleOperationSelect} isActive={operation == activeOperation} />
 		{/each}
 	</div>
 
@@ -88,7 +80,7 @@
     	{#if operationResult}
 		{#await operationResult then {content, response}}
 			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
-			<OperationResultMenu operation={activeOperation} {response} handleClick={operation => handleClick(operation, content)} />
+			<OperationResultMenu operation={activeOperation} {response} handleMenuClick={operation => handleOperationSelect(operation, content)} />
 		{/await}
 		{/if}
 	</div>
