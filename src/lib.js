@@ -387,6 +387,7 @@ function linkOperationToTags(openapi) {
 
 			if (!operation.tags) {
 				otherOperations.push(operation);
+				operation.tags = [];
 				continue;
 			}
 
@@ -438,7 +439,8 @@ function walkSchemas(openapi, visitors) {
 }
 
 function setRequired(schema) {
-	if ('required' in schema) { return; }
+	if ('required' in schema)
+		return;
 	Object.entries(schema.properties).forEach(([key, property]) => {
 		if (property.required === undefined) {
 			property.required = schema.required && schema.required.includes(key);
@@ -455,15 +457,18 @@ function fixSchemas(openapi) {
 }
 
 function arrayStartsWith(prefixArray, array) {
-	if (array.length < prefixArray.length) return false;
+	if (array.length < prefixArray.length)
+		return false;
 
 	for (let i = 0; i < prefixArray.length; i++) {
-		if (array[i] !== prefixArray[i]) return false;
+		if (array[i] !== prefixArray[i])
+			return false;
 	}
 	return true;
 }
 
 function linkChildOperations(openapi) {
+	// Adds a 'children' fields to each endpoint containing a list of operations that have a path starting with the current path
 
 	let _pathes = Object.entries(openapi.paths);
 	let endpoints = _pathes.map(([k, v]) => v);
@@ -477,9 +482,8 @@ function linkChildOperations(openapi) {
 		for (let j = 0; j < pathesAsArrays.length; j++) {
 			let path2 = pathesAsArrays[j];
 
-			if (i === j) continue;
-			if (!arrayStartsWith(path1, path2)) continue;
-			if (path2.length !== path1.length + 1) continue;
+			if (i != j && !arrayStartsWith(path1, path2)) continue;
+			if (path2.length > path1.length + 1) continue;
 
 			for (let method of openapiHttpMethods) {
 				if (method in endpoints[j]) {

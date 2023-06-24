@@ -221,7 +221,7 @@ def add_users_in_bulk(users:list[User]) -> list[User]:
 @app.post('/users/random', response_model=User, tags=['users'])
 def post_random_user() -> User:
 	"""Adds a new user"""
-	user = random_user(None)
+	user = random_user()
 	users[user.name] = user
 	return user
 
@@ -267,14 +267,14 @@ class TaskOut(BaseModel):
 	status:TaskStatus = TaskStatus.TODO
 
 
-@app.get('/users/{name}/tasks')
-def get_tasks(name:str) -> list[TaskOut]:
+@app.get('/users/{name}/tasks', tags=['tasks'])
+def get_user_tasks(name:str) -> list[TaskOut]:
 	return [
 		TaskOut(task_id=1, name=name, text='Kill me', status=TaskStatus.DONE),
 		TaskOut(task_id=2, name=name, text='Do stuff', status=TaskStatus.IN_PROGRESS)
 	]
 
-@app.get('/users/{name}/tasks/{task_id}')
+@app.get('/users/{name}/tasks/{task_id}', tags=['tasks'])
 def get_task(name:str, task_id:int) -> TaskOut:
 	return TaskOut(task_id=task_id, name=name, text='Do stuff', status=TaskStatus.IN_PROGRESS)
 
@@ -310,8 +310,7 @@ def add_task(name:str, task:TaskIn) -> TaskOut:
 	"""
 	return TaskOut(task_id=555, name=name, text=task.text, status=task.status)
 
-@app.delete('/users/{name}/tasks/{task_id}')
-@app.delete('/users/{name}/tasks/{task_id}/delete')
+@app.delete('/users/{name}/tasks/{task_id}', tags=['tasks'])
 def delete_task(name:str, task_id:int) -> str:
 	return f'Deleted task {task_id} of user {name}'
 
