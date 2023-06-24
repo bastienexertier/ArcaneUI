@@ -13,7 +13,7 @@
 	let actionName = operation.summary || operation.operationId;
 </script>
 
-<div class:active={isActive} class="mt-3 p-2 box operation-item border-{bootstrapClassName}" on:click={() => handleOperationSelect(operation, null)} >
+<div class:active={isActive} class="mt-3 p-2 box operation-item border-{bootstrapClassName}" on:click={() => handleOperationSelect(operation, null, null)} >
 	<div>
 		<h5>{actionName}</h5>
 		{#if operation.deprecated}

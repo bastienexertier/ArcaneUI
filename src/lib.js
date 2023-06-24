@@ -303,6 +303,22 @@ export function getResponseSchema(operationResponseType) {
 	return null;
 }
 
+export function parameterValuesFromUrl(operation, url) {
+
+	let values = {};
+
+	let operationPath = operation.path.split('/');
+	let responsePath = new URL(url).pathname.split('/');
+
+	for (let i = 0; i < responsePath.length; i++) {
+		if (operationPath[i][0] === '{' && operationPath[i][operationPath[i].length-1] === '}') {
+			values[operationPath[i].slice(1, -1)] = responsePath[i];
+		}
+	}
+
+	return values;
+}
+
 export function createGetHandler(operation, properties, currentUrl, handleGet) {
 
 	if (properties === null) return;
@@ -364,7 +380,7 @@ function linkOperationToTags(openapi) {
 		for (let [method, operation] of Object.entries(endpoint)) {
 			if (!openapiHttpMethods.includes(method)) { continue; }
 
-			operation.path = path;
+			operation.path = path.replace(/\/$/, '').replace(/^\/?/, '/');
 			operation.endpoint = endpoint;
 			operation.method = method;
 			operation.parameters = operation.parameters || [];

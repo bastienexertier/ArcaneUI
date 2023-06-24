@@ -1,5 +1,5 @@
 <script>
-	import { callOperation, callEndpoint, unflattenFormData } from '../lib.js';
+	import { callOperation, callEndpoint, parameterValuesFromUrl, unflattenFormData } from '../lib.js';
 
 	import OperationListItem from './OperationListItem.svelte';
 	import OperationForm from './OperationForm.svelte';
@@ -14,11 +14,16 @@
 	let operationResult = null;
 	let parameterValues = null;
 
-	function handleOperationSelect(operation, content) {
-		activeOperation = operation;
-		parameterValues = content;
 
-		let autoSubmit = !operation.requestBody && operation.parameters.every(p => p.name in content);
+	function handleOperationSelect(operation, content, response) {
+		activeOperation = operation;
+		parameterValues = content || {};
+
+		if (response) {
+			parameterValues = {...parameterValues, ...parameterValuesFromUrl(operation, response.url)};
+		}
+
+		let autoSubmit = !operation.requestBody && operation.parameters.every(p => p.name in parameterValues);
 		showForm = !autoSubmit;
 		if (autoSubmit) {
 			operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, parameterValues);
@@ -49,7 +54,8 @@
 	}
 
 	function handleDelete(url, deleteOperation) {
-		if (!confirm('Do you really want to delete this item?')) {return;}
+		if (!confirm('Do you really want to delete this item?'))
+			return;
 		showForm = true;
 		operationResult = callEndpoint(url, 'delete', {});
 		operationResult = null;
@@ -80,7 +86,9 @@
     	{#if operationResult}
 		{#await operationResult then {content, response}}
 			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
-			<OperationResultMenu operation={activeOperation} {response} handleMenuClick={operation => handleOperationSelect(operation, content)} />
+			{#if !Array.isArray(content)}
+				<OperationResultMenu operation={activeOperation} {response} handleMenuClick={operation => handleOperationSelect(operation, content, response)} />
+			{/if}
 		{/await}
 		{/if}
 	</div>

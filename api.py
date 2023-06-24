@@ -193,9 +193,13 @@ def moms_address(name:str) -> Address|None:
 		return users[name].mom_address
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
-@app.get('/users/{name}/info/food', tags=['_users'])
+@app.get('/users/{name}/info/foods', tags=['_users'])
 def favorite_food(name:str) -> str:
 	return f'{name} likes Burgers.'
+
+@app.post('/users/{name}/info/foods/add', tags=['_users'])
+def add_favorite_food(name:str, food:str) -> str:
+	return f'{name} likes {food} too.'
 
 @app.post('/users/{name}/money', tags=['_users'])
 def give_money(name:str, amount:int) -> str:
@@ -307,6 +311,7 @@ def add_task(name:str, task:TaskIn) -> TaskOut:
 	return TaskOut(task_id=555, name=name, text=task.text, status=task.status)
 
 @app.delete('/users/{name}/tasks/{task_id}')
+@app.delete('/users/{name}/tasks/{task_id}/delete')
 def delete_task(name:str, task_id:int) -> str:
 	return f'Deleted task {task_id} of user {name}'
 
