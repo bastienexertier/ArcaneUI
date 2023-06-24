@@ -8,10 +8,12 @@
 
 <div class="row">
 	{#if operation.endpoint.children}
-		{#each operation.endpoint.children as operation (operation.operationId)}
-			<div class="col-4">
-				<OperationListItem {operation} handleOperationSelect={handleMenuClick} />
-			</div>
+		{#each operation.endpoint.children as childOperation (childOperation.operationId)}
+			{#if childOperation.path != operation.path || childOperation.method != operation.method}
+				<div class="col-4">
+					<OperationListItem operation={childOperation} handleOperationSelect={handleMenuClick} />
+				</div>
+			{/if}
 		{/each}
 	{/if}
 </div>
