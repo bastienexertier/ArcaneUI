@@ -18,7 +18,7 @@
 		</thead>
 		<tbody class="table-group-divider">
 			{#each content as item}
-				<tr on:click={() => handleGet(item)}>
+				<tr on:click={() => handleGet && handleGet(item)}>
 					{#each Object.keys(properties) as propertyKey}
 						<td><ItemValue type={properties[propertyKey].type} value={item[propertyKey]} /></td>
 					{/each}
