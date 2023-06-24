@@ -86,7 +86,8 @@
     	{#if operationResult}
 		{#await operationResult then {content, response}}
 			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
-			{#if !Array.isArray(content)}
+			{#if Array.isArray(content) || activeOperation.method === "delete" || !response.ok}
+			{:else}
 				<OperationResultMenu operation={activeOperation} {response} handleMenuClick={operation => handleOperationSelect(operation, content, response)} />
 			{/if}
 		{/await}
