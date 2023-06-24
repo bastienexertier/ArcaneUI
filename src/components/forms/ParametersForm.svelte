@@ -11,7 +11,7 @@
 			<tbody>
 				{#each parameters as parameter, index}
 					{#if parameterValues && parameter.name in parameterValues}
-						<input id={index} class="form-control" type="hidden" name={parameter.name} value={parameterValues[parameter.name]} >
+						<ParametersFormRow id={index} {parameter} defaultValue={parameterValues[parameter.name]}/>
 					{:else}
 						<ParametersFormRow id={index} {parameter} />
 					{/if}

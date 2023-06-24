@@ -3,11 +3,12 @@
 	
 	export let id;
 	export let parameter;
+	export let defaultValue = null;
 </script>
 
 <tr>
 	<td><label for={id}>{parameter.schema.title}</label></td>
-	<td><InputSelector inputId={id} schema={parameter.schema} name={parameter.name} required={parameter.required} /></td>
+	<td><InputSelector inputId={id} schema={parameter.schema} name={parameter.name} required={parameter.required} {defaultValue} /></td>
 </tr>
 
 <style>

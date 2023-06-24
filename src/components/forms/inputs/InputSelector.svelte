@@ -9,6 +9,7 @@
 	export let schema;
 	export let name;
 	export let required;
+	export let defaultValue = null;
 
 	let inputType = getInputType(schema);
 </script>
@@ -18,5 +19,5 @@
 {:else if schema.type == 'boolean'}
 	<BooleanInput {inputId} {name} defaultValue={schema.default}/>
 {:else}
-	<DefaultInput {inputId} {name} {required} {inputType} defaultValue={schema.default}/>
+	<DefaultInput {inputId} {name} {required} {inputType} {defaultValue} placeholder={schema.default}/>
 {/if}

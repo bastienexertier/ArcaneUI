@@ -14,11 +14,11 @@
 	let operationResult = null;
 	let parameterValues = null;
 
-	function handleClick(operation) {
+	function handleClick(operation, content) {
 		showForm = true;
 		activeOperation = operation;
 		operationResult = null;
-		parameterValues = null;
+		parameterValues = content;
 	}
 
 	function handleGet(getOperation, currentUrl, key, content, autoSubmit) {
@@ -39,7 +39,6 @@
 		let data = new FormData(e.target);
 		let content = unflattenFormData(data.entries());
 	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
-	    parameterValues = null;
 	}
 
 	function handleFormClose() {
@@ -89,7 +88,7 @@
     	{#if operationResult}
 		{#await operationResult then {content, response}}
 			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
-			<OperationResultMenu operation={activeOperation} {response} {handleClick} />
+			<OperationResultMenu operation={activeOperation} {response} handleClick={operation => handleClick(operation, content)} />
 		{/await}
 		{/if}
 	</div>

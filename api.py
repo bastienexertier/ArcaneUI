@@ -187,10 +187,10 @@ def moms_address(name:str) -> Address|None:
 	if name in users:
 		return users[name].mom_address
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
-@app.get('/users/{name}/food', response_model=Address|None, tags=['users'])
+@app.get('/users/{name}/food', tags=['users'])
 def favorite_food(name:str) -> str:
 	return f'{name} likes Burgers.'
-@app.post('/users/{name}/money', response_model=Address|None, tags=['users'])
+@app.post('/users/{name}/money', tags=['users'])
 def give_money(name:str, amount:int) -> str:
 	return f'You gave {amount}€ to {name}'
 
@@ -201,7 +201,7 @@ def give_money(name:str, amount:int) -> str:
 # 	users[user.name] = user
 # 	return user
 
-@app.post('/users/buld', response_model=list[User], tags=['users'])
+@app.post('/users/bulk', response_model=list[User], tags=['users'])
 def add_users_in_bulk(users:list[User]) -> list[User]:
 	"""Adds many new users"""
 	print(users)
@@ -245,18 +245,23 @@ class TaskStatus(enum.Enum):
 	IN_PROGRESS = "IN_PROGRESS"
 	DONE = "DONE"
 
-class Task(BaseModel):
-	user_id:int
+class TaskIn(BaseModel):
+	text:str
+	status:TaskStatus = TaskStatus.TODO
+
+class TaskOut(BaseModel):
+	task_id:str
+	name:str
 	text:str
 	status:TaskStatus = TaskStatus.TODO
 
 @app.post(
-	'/users/{user_id_for_the_task}/tasks/{task_id}',
+	'/users/{name}/tasks',
 	tags=['tasks'],
-	response_model=Task,
+	response_model=TaskOut,
 	responses={
 		200: {
-			"model": Task,
+			"model": TaskOut,
 			"description": "Here is your task:",
 		},
 		404: {
@@ -264,7 +269,7 @@ class Task(BaseModel):
 		}
 	},
 )
-def post_task(user_id_for_the_task:int, task_id:int, task:Task) -> Task:
+def post_task(name:str, task:TaskIn) -> TaskOut:
 	"""
 	# Get Task
 	This menu is really well documented.  
@@ -280,21 +285,20 @@ def post_task(user_id_for_the_task:int, task_id:int, task:Task) -> Task:
 	```
 
 	"""
+	return TaskOut(task_id=555, name=name, text=task.text, status=task.status)
 
-	if user_id_for_the_task == 404:
-		raise HTTPException(status_code=404)
+@app.delete('/users/{name}/tasks/{task_id}')
+def delete_task(name:str, task_id:int) -> str:
+	return f'Deleted task {task_id} of user {name}'
 
-	return task
-
-
-@app.post('/users/{user_id}/tasks', tags=['tasks'])
-def add_task(user_id:int, task_status:TaskStatus, text:str='Do something') -> Task:
-	return Task(user_id=user_id, text=text, status=task_status)
+# @app.post('/users/{user_id}/tasks', tags=['tasks'])
+# def add_task(user_id:int, task_status:TaskStatus, text:str='Do something') -> Task:
+# 	return Task(user_id=user_id, text=text, status=task_status)
 
 
-@app.post('/tasks', tags=['tasks'])
-def add_tasks(tasks:list[Task]):
-	return tasks
+# @app.post('/tasks', tags=['tasks'])
+# def add_tasks(tasks:list[Task]):
+# 	return tasks
 
 class BeepBoop(BaseModel):
 	toggle_1:bool = False
@@ -447,13 +451,19 @@ def add_traders(traders:list[User]):
 def trailing_slash(value:int):
 	return value
 
+## PARAMETERS
+
+@app.get('/parameters/default_value', tags=['parameters'])
+def default_value(name:Annotated[str, Query()]='Toto'):
+	return name
+
 @app.get('/parameters/array', tags=['parameters'])
 def array(numbers:Annotated[list[int], Query()]):
 	return {"result": sum(numbers)}
 
 @app.get('/parameters/incorrect_return_value', tags=['parameters'])
 def incorrect_return_value(numbers:Annotated[list[int], Query()]) -> int:
-	return {"result": sum(numbers)}
+	return {"result": sum(numbers)}  # type: ignore[return-value]
 
 @app.get('/parameters/union', tags=['parameters'])
 def union(number:Annotated[int|bool, Query()]):

@@ -61,7 +61,7 @@
 						<PencilSquare width={22} height={22} />
 					</button>
 				{/if}
-				{#if deleteOperation}
+				{#if deleteOperation && operation.method !== 'delete'}
 					<button on:click|preventDefault={() => handlers.delete(response.url, deleteOperation)}>
 						<TrashFill width={22} height={22} />
 					</button>
@@ -82,6 +82,7 @@
 		{:else if schema.type === "object"}
 			<ResultObject {properties} {content} />
 		{:else}
+			<hr>
 			{content}
 		{/if}
 	{/if}
