@@ -463,6 +463,7 @@ function linkChildOperations(openapi) {
 
 			if (i === j) continue;
 			if (!arrayStartsWith(path1, path2)) continue;
+			if (path2.length !== path1.length + 1) continue;
 
 			for (let method of openapiHttpMethods) {
 				if (method in endpoints[j]) {
