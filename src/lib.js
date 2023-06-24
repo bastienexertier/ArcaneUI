@@ -304,16 +304,14 @@ export function getResponseSchema(operationResponseType) {
 
 export function createGetHandler(operation, properties, currentUrl, handleGet) {
 
-	let getUrl = null;
-
 	if (properties === null) return;
 
 	let operationPath = operation.path.replace(/\/$/, '');
 
 	for (let key of Object.keys(properties)) {
-		let endpoint = operation.endpoint.children[operationPath + `/{${key}}`];
-		if (endpoint && endpoint.get) {
-			return content => handleGet(endpoint.get, currentUrl, key, content, true);
+		let childOperation = operation.endpoint.children.find(o => o.path === operationPath + `/{${key}}`);
+		if (childOperation && childOperation.method === "get") {
+			return content => handleGet(childOperation, currentUrl, key, content, true);
 		}
 	}
 
@@ -452,10 +450,9 @@ function linkChildOperations(openapi) {
 
 	let _pathes = Object.entries(openapi.paths);
 	let endpoints = _pathes.map(([k, v]) => v);
-	let pathes = _pathes.map(([k, v]) => k);
-	let pathesAsArrays = pathes.map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
+	let pathesAsArrays = _pathes.map(([k, v]) => k).map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
 
-	endpoints.forEach((endpoint) => endpoint.children = {});
+	endpoints.forEach((endpoint) => endpoint.children = []);
 
 	for (let i = 0; i < pathesAsArrays.length; i++) {
 		let path1 = pathesAsArrays[i];
@@ -466,7 +463,11 @@ function linkChildOperations(openapi) {
 			if (i === j) continue;
 			if (!arrayStartsWith(path1, path2)) continue;
 
-			endpoints[i].children[pathes[j]] = endpoints[j];
+			for (let method of openapiHttpMethods) {
+				if (method in endpoints[j]) {
+					endpoints[i].children.push(endpoints[j][method]);
+				}
+			}
 		}
 	}
 }

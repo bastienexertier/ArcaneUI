@@ -8,10 +8,10 @@
 </script>
 
 <div class="row">
-	{#if operation.children}
-		{#each operation.children as childrenOperation}
+	{#if operation.endpoint.children}
+		{#each operation.endpoint.children as operation (operation.operationId)}
 			<div class="col-4">
-				<OperationListItem operation={childrenOperation.get} {handleClick} />
+				<OperationListItem {operation} {handleClick} />
 			</div>
 		{/each}
 	{/if}
