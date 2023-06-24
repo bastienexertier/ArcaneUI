@@ -2,6 +2,7 @@
 	import OperationListItem from './OperationListItem.svelte';
 
 	export let operation;
+	export let response;
 	export let handleClick;
 	console.log(operation);
 </script>

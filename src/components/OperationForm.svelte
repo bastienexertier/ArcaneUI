@@ -9,6 +9,7 @@
 	import InputSelector from './forms/inputs/InputSelector.svelte';
 
 	export let operation;
+	export let parameterValues;
 	export let handleSubmit;
 	export let handleFormClose;
 
@@ -43,7 +44,7 @@
 	<hr>
 	<form on:submit|preventDefault={handleSubmit}>
 		{#if operation.parameters && operation.parameters.length > 0}
-			<ParametersForm parameters={operation.parameters} />
+			<ParametersForm parameters={operation.parameters} {parameterValues} />
 		{/if}
 
 		{#if bodySchema}

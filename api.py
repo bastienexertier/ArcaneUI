@@ -177,16 +177,22 @@ def get_users_by_name_query(query:str|None='') -> list[UserOut]:
 	return [UserOut(**user.dict()) for user in users.values() if query in user.name]
 
 @app.get('/users/{name}', response_model=User, tags=['users'])
-def get_user(name:str, favorite_color:str|None='Red') -> User:
+def get_user(name:str) -> User:
 	if name in users:
 		return users[name]
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
 @app.get('/users/{name}/mom', response_model=Address|None, tags=['users'])
-def get_moms_address(name:str) -> Address|None:
+def moms_address(name:str) -> Address|None:
 	if name in users:
 		return users[name].mom_address
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
+@app.get('/users/{name}/food', response_model=Address|None, tags=['users'])
+def favorite_food(name:str) -> str:
+	return f'{name} likes Burgers.'
+@app.post('/users/{name}/money', response_model=Address|None, tags=['users'])
+def give_money(name:str, amount:int) -> str:
+	return f'You gave {amount}€ to {name}'
 
 # @app.post('/users', response_model=User, tags=['users'])
 # def post_user(user:User) -> User:

@@ -305,7 +305,6 @@ export function getResponseSchema(operationResponseType) {
 export function createGetHandler(operation, properties, currentUrl, handleGet) {
 
 	let getUrl = null;
-	let getOperation = null;
 
 	if (properties === null) return;
 
@@ -314,13 +313,11 @@ export function createGetHandler(operation, properties, currentUrl, handleGet) {
 	for (let key of Object.keys(properties)) {
 		let endpoint = operation.endpoint.children[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
-			getOperation = endpoint.get;
-			getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
-			break;
+			return content => handleGet(endpoint.get, currentUrl, key, content, true);
 		}
 	}
 
-	return (getUrl && getOperation)? id => handleGet(getUrl, getOperation, id): null;
+	return null;
 }
 
 function createTag(tagName) {

@@ -12,23 +12,34 @@
 	let showForm = true;
 	let activeOperation = null;
 	let operationResult = null;
+	let parameterValues = null;
 
 	function handleClick(operation) {
 		showForm = true;
 		activeOperation = operation;
 		operationResult = null;
+		parameterValues = null;
 	}
 
-	function handleGet(getUrl, getOperation, content) {
-		showForm = false;
+	function handleGet(getOperation, currentUrl, key, content, autoSubmit) {
+		showForm = !autoSubmit;
 		activeOperation = getOperation;
-		operationResult = callOperation(openapi.server, openapi, getUrl, getOperation, content);
+		parameterValues = {};
+		parameterValues[key] = content[key];
+
+		if (autoSubmit) {
+			let getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
+			operationResult = callOperation(openapi.server, openapi, getUrl, getOperation, content);
+		} else {
+			operationResult = null;
+		}
 	}
 
 	function handleSubmit(e) {
 		let data = new FormData(e.target);
 		let content = unflattenFormData(data.entries());
 	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
+	    parameterValues = null;
 	}
 
 	function handleFormClose() {
@@ -36,12 +47,14 @@
 			showForm = false;
 		} else {
 			activeOperation = null;
+			parameterValues = null;
 		}
 	}
 
 	function handleClose() {
 		showForm = true;
 		operationResult = null;
+		parameterValues = null;
 	}
 
 	function handleDelete(url, deleteOperation) {
@@ -49,6 +62,7 @@
 		showForm = true;
 		operationResult = callEndpoint(url, 'delete', {});
 		operationResult = null;
+		parameterValues = null;
 	}
 
 	let resultHandlers = {
@@ -68,14 +82,14 @@
 	<div class="col-9 mb-5">
 		{#if activeOperation && showForm}
 		{#key activeOperation}
-	    	<OperationForm operation={activeOperation} {handleSubmit} {handleFormClose}/>
+	    	<OperationForm operation={activeOperation} {parameterValues} {handleSubmit} {handleFormClose}/>
 		{/key}
 		{/if}
 
     	{#if operationResult}
 		{#await operationResult then {content, response}}
 			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
-			<OperationResultMenu operation={activeOperation} {handleClick} />
+			<OperationResultMenu operation={activeOperation} {response} {handleClick} />
 		{/await}
 		{/if}
 	</div>
