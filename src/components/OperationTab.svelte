@@ -36,6 +36,7 @@
 		let data = new FormData(e.target);
 		let content = unflattenFormData(data.entries());
 	    operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, content);
+	    showForm = activeOperation.method != "delete";
 	}
 
 	function handleFormClose() {
@@ -57,7 +58,7 @@
 		if (!confirm('Do you really want to delete this item?'))
 			return;
 		showForm = true;
-		operationResult = callEndpoint(url, 'delete', {});
+		callEndpoint(url, 'delete', {});
 		operationResult = null;
 		parameterValues = null;
 	}
