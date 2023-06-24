@@ -442,9 +442,45 @@ function fixSchemas(openapi) {
 	]);
 }
 
+function arrayStartsWith(prefixArray, array) {
+	if (array.length < prefixArray.length) return false;
+
+	for (let i = 0; i < prefixArray.length; i++) {
+		if (array[i] !== prefixArray[i]) return false;
+	}
+	return true;
+}
+
+function linkChildOperations(openapi) {
+
+	let pathes = Object.values(openapi.paths);
+	let pathArrays = Object.keys(openapi.paths).map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
+
+	pathes.forEach((endpoint) => {
+		if (endpoint.get)
+			endpoint.get.children = [];
+	})
+
+	for (let i = 0; i < pathArrays.length; i++) {
+		let path1 = pathArrays[i];
+		if (!pathes[i].get) continue;
+
+		for (let j = 0; j < pathArrays.length; j++) {
+			let path2 = pathArrays[j];
+			if (!pathes[j].get) continue;
+
+			if (path1 === path2) continue;
+			if (!arrayStartsWith(path1, path2)) continue;
+
+			pathes[i].get.children.push(pathes[j])
+		}
+	}
+}
+
 export function decorateOpenApi(documentUrl, openapi) {
 	addServer(documentUrl, openapi);
 	linkOperationToTags(openapi);
+	linkChildOperations(openapi);
 	fillSchema(openapi);
 	fixSchemas(openapi);
 

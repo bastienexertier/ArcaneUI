@@ -183,7 +183,7 @@ def get_user(name:str, favorite_color:str|None='Red') -> User:
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
 
 @app.get('/users/{name}/mom', response_model=Address|None, tags=['users'])
-def get_user_moms_address(name:str) -> Address|None:
+def get_moms_address(name:str) -> Address|None:
 	if name in users:
 		return users[name].mom_address
 	raise HTTPException(status_code=404, detail=f'No user has name "{name}"')
@@ -436,6 +436,10 @@ def get_instrument(id:int|bool):
 @app.post('/traders', tags=['finance'])
 def add_traders(traders:list[User]):
 	return traders
+
+@app.post('/trailing_slash/', tags=['path'])
+def trailing_slash(value:int):
+	return value
 
 @app.get('/parameters/array', tags=['parameters'])
 def array(numbers:Annotated[list[int], Query()]):

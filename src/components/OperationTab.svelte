@@ -4,6 +4,7 @@
 	import OperationListItem from './OperationListItem.svelte';
 	import OperationForm from './OperationForm.svelte';
 	import OperationResult from './OperationResult.svelte';
+	import OperationResultMenu from './OperationResultMenu.svelte';
 
 	export let openapi;
 	export let operations;
@@ -73,7 +74,8 @@
 
     	{#if operationResult}
 		{#await operationResult then {content, response}}
-			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers}/>
+			<OperationResult {openapi} operation={activeOperation} {content} {response} handlers={resultHandlers} />
+			<OperationResultMenu operation={activeOperation} {handleClick} />
 		{/await}
 		{/if}
 	</div>
