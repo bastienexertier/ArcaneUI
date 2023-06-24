@@ -23,7 +23,7 @@
 			parameterValues = {...parameterValues, ...parameterValuesFromUrl(operation, response.url)};
 		}
 
-		let autoSubmit = !operation.requestBody && operation.parameters.every(p => p.name in parameterValues);
+		let autoSubmit = operation.method === "get" && operation.parameters.every(p => p.name in parameterValues);
 		showForm = !autoSubmit;
 		if (autoSubmit) {
 			operationResult = callOperation(openapi.server, openapi, activeOperation.path, activeOperation, parameterValues);
