@@ -302,7 +302,7 @@ export function getResponseSchema(operationResponseType) {
 	return null;
 }
 
-export function createGetHandler(openapi, operation, properties, currentUrl, handleGet) {
+export function createGetHandler(operation, properties, currentUrl, handleGet) {
 
 	let getUrl = null;
 	let getOperation = null;
@@ -312,7 +312,7 @@ export function createGetHandler(openapi, operation, properties, currentUrl, han
 	let operationPath = operation.path.replace(/\/$/, '');
 
 	for (let key of Object.keys(properties)) {
-		let endpoint = openapi.paths[operationPath + `/{${key}}`];
+		let endpoint = operation.endpoint.children[operationPath + `/{${key}}`];
 		if (endpoint && endpoint.get) {
 			getOperation = endpoint.get;
 			getUrl = new URL(currentUrl).pathname.replace(/\/$/, '') + `/{${key}}`;
@@ -453,26 +453,23 @@ function arrayStartsWith(prefixArray, array) {
 
 function linkChildOperations(openapi) {
 
-	let pathes = Object.values(openapi.paths);
-	let pathArrays = Object.keys(openapi.paths).map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
+	let _pathes = Object.entries(openapi.paths);
+	let endpoints = _pathes.map(([k, v]) => v);
+	let pathes = _pathes.map(([k, v]) => k);
+	let pathesAsArrays = pathes.map(p => p.replace(/\/$/, '').replace(/^\//, '').split('/'));
 
-	pathes.forEach((endpoint) => {
-		if (endpoint.get)
-			endpoint.get.children = [];
-	})
+	endpoints.forEach((endpoint) => endpoint.children = {});
 
-	for (let i = 0; i < pathArrays.length; i++) {
-		let path1 = pathArrays[i];
-		if (!pathes[i].get) continue;
+	for (let i = 0; i < pathesAsArrays.length; i++) {
+		let path1 = pathesAsArrays[i];
 
-		for (let j = 0; j < pathArrays.length; j++) {
-			let path2 = pathArrays[j];
-			if (!pathes[j].get) continue;
+		for (let j = 0; j < pathesAsArrays.length; j++) {
+			let path2 = pathesAsArrays[j];
 
-			if (path1 === path2) continue;
+			if (i === j) continue;
 			if (!arrayStartsWith(path1, path2)) continue;
 
-			pathes[i].get.children.push(pathes[j])
+			endpoints[i].children[pathes[j]] = endpoints[j];
 		}
 	}
 }

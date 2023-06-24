@@ -42,7 +42,7 @@
 	let title = (operationCurrentResponse && operationCurrentResponse.description) || response.statusText;
 	let properties = (schema.type === "array"? schema.items.properties: schema.properties) || null;
 
-	let handleGet = createGetHandler(openapi, operation, properties, response.url, handlers.get);
+	let handleGet = createGetHandler(operation, properties, response.url, handlers.get);
 	let deleteOperation = operation.endpoint.delete;
 	let updateOperation = operation.endpoint.put;
 </script>
